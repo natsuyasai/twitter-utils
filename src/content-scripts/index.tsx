@@ -2,8 +2,10 @@ import { StrictMode } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import App from "./App";
 import { initializeImageSizeChanger } from "./image-size/ImageSizeChanger";
+import { initializeAreaRemove } from "./area-remove/AreaRemove";
 
 initializeImageSizeChanger();
+initializeAreaRemove();
 
 const rootEl: HTMLElement = document.createElement("div");
 document.body.insertBefore(rootEl, document.body.firstElementChild);
