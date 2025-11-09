@@ -1,4 +1,4 @@
-.userscript-root-container {
+.rootContainer {
   position: fixed;
   display: flex;
   top: 40px;
@@ -6,16 +6,16 @@
   z-index: 9999;
 }
 
-.userscript-button-container,
-.userscript-selected-container,
-.userscript-status-container {
+.buttonContainer,
+.selectedContainer,
+.statusContainer {
   position: relative;
   display: flex;
   align-items: center;
   text-align: center;
 }
 
-.userscript-auto-reload-status {
+.status {
   margin: 0 2px 0 4px;
   color: lightgreen;
   background-color: transparent;
@@ -28,7 +28,7 @@
   line-height: 1;
 }
 
-.userscript-auto-reload-button {
+.button {
   position: relative;
   width: 44px;
   height: 20px;
@@ -41,14 +41,14 @@
   background-color: #03a9f4;
   color: white;
   cursor: pointer;
-  transition: 0.3s;
+  transition: opacity 0.3s;
+
+  &:hover {
+    opacity: 0.7;
+  }
 }
 
-.userscript-auto-reload-button:hover {
-  opacity: 0.7;
-}
-
-.userscript-interval-setting {
+.intervalSetting {
   position: relative;
   height: 20px;
   margin: 0.3em;
@@ -60,9 +60,9 @@
   background-color: #03a9f4;
   color: white;
   cursor: pointer;
-  transition: 0.3s;
-}
+  transition: opacity 0.3s;
 
-.userscript-interval-setting:hover {
-  opacity: 0.7;
+  &:hover {
+    opacity: 0.7;
+  }
 }

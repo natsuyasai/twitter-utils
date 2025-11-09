@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
-import "./AutoReload.css";
+import styles from "./AutoReload.module.scss";
 
 interface IntervalOption {
   value: number;
@@ -183,10 +183,10 @@ const AutoReload: React.FC = () => {
   };
 
   return (
-    <div className="userscript-root-container">
-      <div className="userscript-status-container">
+    <div className={styles.rootContainer}>
+      <div className={styles.statusContainer}>
         <button
-          className="userscript-auto-reload-status"
+          className={styles.status}
           onClick={handleStatusClick}
           style={{ color: isEnabled ? "lightgreen" : "lightgray" }}
           aria-label="Toggle visibility"
@@ -197,9 +197,9 @@ const AutoReload: React.FC = () => {
 
       {isVisible && (
         <>
-          <div className="userscript-button-container">
+          <div className={styles.buttonContainer}>
             <button
-              className="userscript-auto-reload-button"
+              className={styles.button}
               type="button"
               onClick={handleToggle}
               style={{ backgroundColor: isStopped ? "gray" : "#03A9F4" }}
@@ -208,9 +208,9 @@ const AutoReload: React.FC = () => {
             </button>
           </div>
 
-          <div className="userscript-selected-container">
+          <div className={styles.selectedContainer}>
             <select
-              className="userscript-interval-setting"
+              className={styles.intervalSetting}
               name="setting"
               size={1}
               onChange={handleIntervalChange}
