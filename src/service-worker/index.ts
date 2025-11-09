@@ -1,3 +1,3 @@
 chrome.action.onClicked.addListener(() => {
-  chrome.tabs.create({ url: "https://x.com/" });
+  chrome.tabs.create({ url: "https://x.com/home" });
 });
