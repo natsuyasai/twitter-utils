@@ -55,6 +55,7 @@ const savePosition = (position: Position): void => {
 
 const AutoReload: React.FC = () => {
   const [currentInterval, setCurrentInterval] = useState(DEFAULT_INTERVAL);
+  const [selectedIntervalIndex, setSelectedIntervalIndex] = useState(8); // デフォルトは5分（インデックス8）
   const [isEnabled, setIsEnabled] = useState(true);
   const [isStopped, setIsStopped] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
@@ -207,6 +208,7 @@ const AutoReload: React.FC = () => {
     const value = parseInt(event.target.value, 10);
     const option = INTERVAL_OPTIONS.find((opt) => opt.value === value);
     if (option) {
+      setSelectedIntervalIndex(value);
       setCurrentInterval(option.seconds);
     }
   };
@@ -315,7 +317,7 @@ const AutoReload: React.FC = () => {
               name="setting"
               size={1}
               onChange={handleIntervalChange}
-              defaultValue={8}
+              value={selectedIntervalIndex}
             >
               {INTERVAL_OPTIONS.map((option) => (
                 <option key={option.value} value={option.value}>
