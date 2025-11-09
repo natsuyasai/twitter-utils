@@ -18,6 +18,8 @@ const INTERVAL_OPTIONS: IntervalOption[] = [
   { value: 7, label: "3分", seconds: 180 },
   { value: 8, label: "5分", seconds: 300 },
   { value: 9, label: "10分", seconds: 600 },
+  { value: 10, label: "15分", seconds: 900 },
+  { value: 11, label: "30分", seconds: 1800 },
 ];
 
 const DEFAULT_INTERVAL = 300; // 5分
