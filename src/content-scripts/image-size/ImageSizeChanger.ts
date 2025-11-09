@@ -1,0 +1,66 @@
+const IMAGE_WIDTH = "100px";
+
+/**
+ * スタイル適用
+ */
+function addStyle() {
+  const css = `
+div[data-testid="card.layoutLarge.media"]>a>div:has(img) {
+    width: ${IMAGE_WIDTH} !important;
+}
+[data-testid="card.layoutLarge.media"]>a {
+    flex-direction: row !important;
+}
+`;
+  const styleElement = document.createElement("style");
+  styleElement.innerHTML = css;
+  document.head.append(styleElement);
+}
+
+function setSmallImage() {
+  const images = document.body.querySelectorAll(
+    "div[data-testid='tweetPhoto']"
+  );
+  images.forEach((image) => {
+    const root = getImageRoot(image);
+    if (root === null) {
+      return;
+    }
+    root.style.width = IMAGE_WIDTH;
+  });
+}
+
+/**
+ * @param {Element} element
+ */
+function getImageRoot(element: Element) {
+  if (element.parentElement === null) {
+    return null;
+  }
+  const ariaLabelledby = element.parentElement.getAttribute("aria-labelledby");
+  if (ariaLabelledby) {
+    return element.parentElement;
+  }
+  return getImageRoot(element.parentElement);
+}
+
+function observeDOMChanges() {
+  const observer = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+      if (mutation.type === "childList" && mutation.addedNodes.length > 0) {
+        setSmallImage();
+      }
+    });
+  });
+
+  observer.observe(document.body, {
+    childList: true,
+    subtree: true,
+  });
+}
+
+export function initializeImageSizeChanger() {
+  addStyle();
+  setSmallImage();
+  observeDOMChanges();
+}
