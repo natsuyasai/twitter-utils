@@ -7,6 +7,10 @@ const SETTINGS_KEY = "twitter-utils-settings";
  * Chrome Storage APIから設定を取得
  */
 export const getSettings = async (): Promise<AppSettings> => {
+  if (!chrome?.storage?.sync) {
+    console.warn("chrome.storage.sync is not available");
+    return DEFAULT_SETTINGS;
+  }
   try {
     const result = await chrome.storage.sync.get(SETTINGS_KEY);
     if (result[SETTINGS_KEY]) {
@@ -26,6 +30,11 @@ export const getSettings = async (): Promise<AppSettings> => {
  * Chrome Storage APIに設定を保存
  */
 export const saveSettings = async (settings: AppSettings): Promise<void> => {
+  if (!chrome?.storage?.sync) {
+    const error = new Error("chrome.storage.sync is not available");
+    console.error("Failed to save settings:", error);
+    throw error;
+  }
   try {
     await chrome.storage.sync.set({ [SETTINGS_KEY]: settings });
   } catch (error) {
@@ -51,6 +60,11 @@ export const updateSettings = async (
 export const onSettingsChange = (
   callback: (settings: AppSettings) => void
 ): (() => void) => {
+  if (!chrome?.storage?.onChanged) {
+    console.warn("chrome.storage.onChanged is not available");
+    return () => {}; // 空のクリーンアップ関数を返す
+  }
+
   const listener = (
     changes: { [key: string]: chrome.storage.StorageChange },
     areaName: string
