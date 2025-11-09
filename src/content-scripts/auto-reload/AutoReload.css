@@ -1,0 +1,68 @@
+.userscript-root-container {
+  position: fixed;
+  display: flex;
+  top: 40px;
+  left: 0;
+  z-index: 9999;
+}
+
+.userscript-button-container,
+.userscript-selected-container,
+.userscript-status-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  text-align: center;
+}
+
+.userscript-auto-reload-status {
+  margin: 0 2px 0 4px;
+  color: lightgreen;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  outline: none;
+  padding: 0;
+  appearance: none;
+  font-size: 32px;
+  line-height: 1;
+}
+
+.userscript-auto-reload-button {
+  position: relative;
+  width: 44px;
+  height: 20px;
+  margin: 0.3em;
+  overflow: hidden;
+  border-radius: 4px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+  border: none;
+  text-align: center;
+  background-color: #03a9f4;
+  color: white;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.userscript-auto-reload-button:hover {
+  opacity: 0.7;
+}
+
+.userscript-interval-setting {
+  position: relative;
+  height: 20px;
+  margin: 0.3em;
+  overflow: hidden;
+  border-radius: 4px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+  border: none;
+  text-align: center;
+  background-color: #03a9f4;
+  color: white;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.userscript-interval-setting:hover {
+  opacity: 0.7;
+}
