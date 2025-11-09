@@ -105,14 +105,44 @@ const AutoReload: React.FC = () => {
   const dragStartRef = useRef<{ x: number; y: number } | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // 初回マウント時にインターバルを復元
-  useEffect(() => {
+  // インターバル設定を復元する関数
+  const restoreIntervalSetting = useCallback(() => {
     const storedIndex = getStoredInterval();
     const option = INTERVAL_OPTIONS.find((opt) => opt.value === storedIndex);
     if (option) {
+      setSelectedIntervalIndex(storedIndex);
       setCurrentInterval(option.seconds);
     }
   }, []);
+
+  // 初回マウント時にインターバルを復元
+  useEffect(() => {
+    restoreIntervalSetting();
+  }, [restoreIntervalSetting]);
+
+  // タブ切り替えイベントの監視
+  useEffect(() => {
+    const tabElements = document.body.querySelectorAll("a[role='tab']");
+
+    const handleTabClick = () => {
+      // タブクリック後、少し遅延させて設定を復元（タブ切り替え完了を待つ）
+      setTimeout(() => {
+        restoreIntervalSetting();
+      }, 300);
+    };
+
+    // すべてのタブ要素にクリックイベントリスナーを追加
+    tabElements.forEach((tab) => {
+      tab.addEventListener("click", handleTabClick);
+    });
+
+    return () => {
+      // クリーンアップ
+      tabElements.forEach((tab) => {
+        tab.removeEventListener("click", handleTabClick);
+      });
+    };
+  }, [restoreIntervalSetting]);
 
   // スクロール状態チェック
   const isScrolling = useCallback(() => {
@@ -199,11 +229,16 @@ const AutoReload: React.FC = () => {
 
   // URL変更監視
   useEffect(() => {
+    if (typeof window === "undefined" || typeof document === "undefined")
+      return;
+
     let timeoutId: number;
     const handleMutation = () => {
       clearTimeout(timeoutId);
       timeoutId = window.setTimeout(() => {
         updateURLState();
+        // ページ遷移時にインターバル設定を復元
+        restoreIntervalSetting();
       }, 500);
     };
 
@@ -227,7 +262,7 @@ const AutoReload: React.FC = () => {
       observer.disconnect();
       clearTimeout(timeoutId);
     };
-  }, [updateURLState]);
+  }, [updateURLState, restoreIntervalSetting]);
 
   // インターバル処理の初期化と更新
   useEffect(() => {
