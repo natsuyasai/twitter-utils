@@ -229,9 +229,6 @@ const AutoReload: React.FC = () => {
 
   // URL変更監視
   useEffect(() => {
-    if (typeof window === "undefined" || typeof document === "undefined")
-      return;
-
     let timeoutId: number;
     const handleMutation = () => {
       clearTimeout(timeoutId);
