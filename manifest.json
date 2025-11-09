@@ -1,0 +1,23 @@
+{
+    "manifest_version": 3,
+    "name": "twitter-utils",
+    "version": "1.0.0",
+    "action": {},
+    "host_permissions": [
+        "<all_urls>"
+    ],
+    "content_scripts": [
+        {
+            "matches": [
+                "https://x.com/"
+            ],
+            "js": [
+                "src/content-scripts/index.tsx"
+            ]
+        }
+    ],
+    "background": {
+        "service_worker": "src/service-worker/index.ts",
+        "persistent": false
+    }
+}
