@@ -7,6 +7,11 @@ interface IntervalOption {
   seconds: number;
 }
 
+interface Position {
+  x: number;
+  y: number;
+}
+
 const INTERVAL_OPTIONS: IntervalOption[] = [
   { value: 0, label: "5秒", seconds: 5 },
   { value: 1, label: "10秒", seconds: 10 },
@@ -23,13 +28,42 @@ const INTERVAL_OPTIONS: IntervalOption[] = [
 ];
 
 const DEFAULT_INTERVAL = 300; // 5分
+const DEFAULT_POSITION: Position = { x: 0, y: 40 };
+const STORAGE_KEY = "auto-reload-position";
+
+// localStorageから位置を取得
+const getStoredPosition = (): Position => {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored) {
+      return JSON.parse(stored);
+    }
+  } catch (error) {
+    console.error("Failed to load position from localStorage:", error);
+  }
+  return DEFAULT_POSITION;
+};
+
+// localStorageに位置を保存
+const savePosition = (position: Position): void => {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(position));
+  } catch (error) {
+    console.error("Failed to save position to localStorage:", error);
+  }
+};
 
 const AutoReload: React.FC = () => {
   const [currentInterval, setCurrentInterval] = useState(DEFAULT_INTERVAL);
   const [isEnabled, setIsEnabled] = useState(true);
   const [isStopped, setIsStopped] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
+  const [position, setPosition] = useState<Position>(getStoredPosition);
+  const [isDragging, setIsDragging] = useState(false);
+
   const timerIdRef = useRef<number>(-1);
+  const dragStartRef = useRef<{ x: number; y: number } | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   // スクロール状態チェック
   const isScrolling = useCallback(() => {
@@ -182,8 +216,71 @@ const AutoReload: React.FC = () => {
     setIsVisible(!isVisible);
   };
 
+  // ドラッグ開始
+  const handleMouseDown = (event: React.MouseEvent) => {
+    // selectやbuttonのクリックは無視
+    const target = event.target as HTMLElement;
+    if (target.tagName === "BUTTON" || target.tagName === "SELECT") {
+      return;
+    }
+
+    setIsDragging(true);
+    dragStartRef.current = {
+      x: event.clientX - position.x,
+      y: event.clientY - position.y,
+    };
+    event.preventDefault();
+  };
+
+  // ドラッグ中
+  const handleMouseMove = useCallback(
+    (event: MouseEvent) => {
+      if (!isDragging || !dragStartRef.current) return;
+
+      const newPosition = {
+        x: event.clientX - dragStartRef.current.x,
+        y: event.clientY - dragStartRef.current.y,
+      };
+
+      setPosition(newPosition);
+    },
+    [isDragging]
+  );
+
+  // ドラッグ終了
+  const handleMouseUp = useCallback(() => {
+    if (isDragging) {
+      setIsDragging(false);
+      dragStartRef.current = null;
+      // 位置を保存
+      savePosition(position);
+    }
+  }, [isDragging, position]);
+
+  // ドラッグイベントリスナーの登録
+  useEffect(() => {
+    if (isDragging) {
+      window.addEventListener("pointermove", handleMouseMove);
+      window.addEventListener("pointerup", handleMouseUp);
+
+      return () => {
+        window.removeEventListener("pointermove", handleMouseMove);
+        window.removeEventListener("pointerup", handleMouseUp);
+      };
+    }
+  }, [isDragging, handleMouseMove, handleMouseUp]);
+
   return (
-    <div className={styles.rootContainer}>
+    <div
+      ref={containerRef}
+      className={styles.rootContainer}
+      style={{
+        left: `${position.x}px`,
+        top: `${position.y}px`,
+        cursor: isDragging ? "grabbing" : "grab",
+      }}
+      onPointerDown={handleMouseDown}
+    >
       <div className={styles.statusContainer}>
         <button
           className={styles.status}

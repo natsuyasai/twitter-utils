@@ -1,9 +1,13 @@
 .rootContainer {
   position: fixed;
   display: flex;
-  top: 40px;
-  left: 0;
   z-index: 9999;
+  user-select: none;
+
+  // ドラッグ可能な視覚的なフィードバック
+  &:active {
+    opacity: 0.9;
+  }
 }
 
 .buttonContainer,
