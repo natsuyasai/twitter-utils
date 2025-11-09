@@ -1,18 +1,18 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import AutoReload from './AutoReload';
+import type { Meta, StoryObj } from "@storybook/react";
+import AutoReload from "./AutoReload";
 
 const meta = {
-  title: 'Content Scripts/AutoReload',
+  title: "Content Scripts/AutoReload",
   component: AutoReload,
   parameters: {
-    layout: 'centered',
+    layout: "centered",
     docs: {
       description: {
-        component: 'Twitter/X自動リロードコンポーネント。タブの自動再選択により、タイムラインを定期的に更新します。',
+        component:
+          "Twitter/X自動リロードコンポーネント。タブの自動再選択により、タイムラインを定期的に更新します。",
       },
     },
   },
-  tags: ['autodocs'],
 } satisfies Meta<typeof AutoReload>;
 
 export default meta;
@@ -38,31 +38,11 @@ export const Interactive: Story = {
   parameters: {
     docs: {
       description: {
-        story: '実際のUIを操作して動作を確認できます。スクロールイベントやURL変更の検知は、実際のTwitter/Xページでのみ動作します。',
+        story:
+          "実際のUIを操作して動作を確認できます。スクロールイベントやURL変更の検知は、実際のTwitter/Xページでのみ動作します。",
       },
     },
   },
-};
-
-/**
- * スタイルの確認用。
- * コンポーネントの視覚的な外観を確認できます。
- */
-export const StyleGuide: Story = {
-  parameters: {
-    docs: {
-      description: {
-        story: 'コンポーネントのスタイリングを確認できます。固定位置（top: 40px, left: 0）に配置され、半透明の影付きボタンが特徴です。',
-      },
-    },
-  },
-  decorators: [
-    (Story) => (
-      <div style={{ width: '100vw', height: '100vh', position: 'relative', background: '#f5f5f5' }}>
-        <Story />
-      </div>
-    ),
-  ],
 };
 
 /**
@@ -71,17 +51,24 @@ export const StyleGuide: Story = {
 export const DarkMode: Story = {
   parameters: {
     backgrounds: {
-      default: 'dark',
+      default: "dark",
     },
     docs: {
       description: {
-        story: 'ダークモード環境でのコンポーネントの表示を確認できます。',
+        story: "ダークモード環境でのコンポーネントの表示を確認できます。",
       },
     },
   },
   decorators: [
     (Story) => (
-      <div style={{ width: '100vw', height: '100vh', position: 'relative', background: '#15202b' }}>
+      <div
+        style={{
+          width: "100vw",
+          height: "100vh",
+          position: "relative",
+          background: "#15202b",
+        }}
+      >
         <Story />
       </div>
     ),
@@ -95,11 +82,11 @@ export const DarkMode: Story = {
 export const Mobile: Story = {
   parameters: {
     viewport: {
-      defaultViewport: 'mobile1',
+      defaultViewport: "mobile1",
     },
     docs: {
       description: {
-        story: 'モバイルデバイスでの表示を確認できます。',
+        story: "モバイルデバイスでの表示を確認できます。",
       },
     },
   },
