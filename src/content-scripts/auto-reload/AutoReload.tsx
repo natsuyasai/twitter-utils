@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import styles from "./AutoReload.module.scss";
+import { getActiveTabName } from "../utlis/tabs";
 
 interface IntervalOption {
   value: number;
@@ -28,13 +29,15 @@ const INTERVAL_OPTIONS: IntervalOption[] = [
 ];
 
 const DEFAULT_INTERVAL = 300; // 5分
+const DEFAULT_INTERVAL_INDEX = 8; // 5分のインデックス
 const DEFAULT_POSITION: Position = { x: 0, y: 40 };
-const STORAGE_KEY = "auto-reload-position";
+const STORAGE_KEY_POSITION = "auto-reload-position";
+const STORAGE_KEY_INTERVAL = "auto-reload-interval";
 
 // localStorageから位置を取得
 const getStoredPosition = (): Position => {
   try {
-    const stored = localStorage.getItem(STORAGE_KEY);
+    const stored = localStorage.getItem(STORAGE_KEY_POSITION);
     if (stored) {
       return JSON.parse(stored);
     }
@@ -47,15 +50,51 @@ const getStoredPosition = (): Position => {
 // localStorageに位置を保存
 const savePosition = (position: Position): void => {
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(position));
+    localStorage.setItem(STORAGE_KEY_POSITION, JSON.stringify(position));
   } catch (error) {
     console.error("Failed to save position to localStorage:", error);
   }
 };
 
+// タブ名を含めたストレージキーを生成
+const getIntervalStorageKey = (): string => {
+  const tabName = getActiveTabName();
+  return tabName ? `${STORAGE_KEY_INTERVAL}-${tabName}` : STORAGE_KEY_INTERVAL;
+};
+
+// localStorageからインターバル設定を取得
+const getStoredInterval = (): number => {
+  try {
+    const key = getIntervalStorageKey();
+    const stored = localStorage.getItem(key);
+    if (stored !== null) {
+      const index = parseInt(stored, 10);
+      // 有効なインデックスかチェック
+      if (!isNaN(index) && index >= 0 && index < INTERVAL_OPTIONS.length) {
+        return index;
+      }
+    }
+  } catch (error) {
+    console.error("Failed to load interval from localStorage:", error);
+  }
+  return DEFAULT_INTERVAL_INDEX;
+};
+
+// localStorageにインターバル設定を保存
+const saveInterval = (intervalIndex: number): void => {
+  try {
+    const key = getIntervalStorageKey();
+    localStorage.setItem(key, intervalIndex.toString());
+  } catch (error) {
+    console.error("Failed to save interval to localStorage:", error);
+  }
+};
+
 const AutoReload: React.FC = () => {
   const [currentInterval, setCurrentInterval] = useState(DEFAULT_INTERVAL);
-  const [selectedIntervalIndex, setSelectedIntervalIndex] = useState(8); // デフォルトは5分（インデックス8）
+  const [selectedIntervalIndex, setSelectedIntervalIndex] = useState(() =>
+    getStoredInterval()
+  );
   const [isEnabled, setIsEnabled] = useState(true);
   const [isStopped, setIsStopped] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
@@ -65,6 +104,15 @@ const AutoReload: React.FC = () => {
   const timerIdRef = useRef<number>(-1);
   const dragStartRef = useRef<{ x: number; y: number } | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  // 初回マウント時にインターバルを復元
+  useEffect(() => {
+    const storedIndex = getStoredInterval();
+    const option = INTERVAL_OPTIONS.find((opt) => opt.value === storedIndex);
+    if (option) {
+      setCurrentInterval(option.seconds);
+    }
+  }, []);
 
   // スクロール状態チェック
   const isScrolling = useCallback(() => {
@@ -210,6 +258,8 @@ const AutoReload: React.FC = () => {
     if (option) {
       setSelectedIntervalIndex(value);
       setCurrentInterval(option.seconds);
+      // タブ固有のキーでlocalStorageに保存
+      saveInterval(value);
     }
   };
 
