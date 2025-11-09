@@ -218,18 +218,13 @@ const AutoReload: React.FC = () => {
 
   // ドラッグ開始
   const handleMouseDown = (event: React.MouseEvent) => {
-    // selectやbuttonのクリックは無視
-    const target = event.target as HTMLElement;
-    if (target.tagName === "BUTTON" || target.tagName === "SELECT") {
-      return;
-    }
-
     setIsDragging(true);
     dragStartRef.current = {
       x: event.clientX - position.x,
       y: event.clientY - position.y,
     };
     event.preventDefault();
+    event.stopPropagation();
   };
 
   // ドラッグ中
@@ -277,10 +272,19 @@ const AutoReload: React.FC = () => {
       style={{
         left: `${position.x}px`,
         top: `${position.y}px`,
-        cursor: isDragging ? "grabbing" : "grab",
       }}
-      onPointerDown={handleMouseDown}
     >
+      {/* ドラッグハンドル */}
+      <div
+        className={styles.dragHandle}
+        onPointerDown={handleMouseDown}
+        style={{ cursor: isDragging ? "grabbing" : "grab" }}
+        aria-label="Drag to move"
+      >
+        ⋮⋮
+      </div>
+
+      {/* ステータスボタン */}
       <div className={styles.statusContainer}>
         <button
           className={styles.status}
