@@ -1,20 +1,23 @@
 import { getActiveTabName } from "../utlis/tabs";
+import { getSettings } from "../../shared/settings";
 
-const EnableTabName = ["フォロー中", "main"];
+let enabledUrls: string[] = [];
+let enabledTabs: string[] = [];
+
+/**
+ * 設定を読み込む
+ */
+async function loadSettings() {
+  const settings = await getSettings();
+  enabledUrls = settings.areaRemove.enabledUrls;
+  enabledTabs = settings.areaRemove.enabledTabs;
+}
 
 /**
  * 有効なURLか
  */
 function isEnableURL() {
-  if (
-    location.href === "https://x.com/" ||
-    location.href.indexOf("/home") >= 0 ||
-    location.href.indexOf("/notifications") >= 0
-  ) {
-    return true;
-  } else {
-    return false;
-  }
+  return enabledUrls.some((url) => location.href.indexOf(url) >= 0);
 }
 
 /**
@@ -28,9 +31,7 @@ function isEnableTab() {
   if (tabName === null) {
     return false;
   }
-  if (EnableTabName.some((name) => name === tabName)) {
-    return true;
-  }
+  return enabledTabs.some((name) => name === tabName);
 }
 
 /**
@@ -117,7 +118,8 @@ function changeSidebarVisibility() {
   }
 }
 
-export function initializeAreaRemove() {
+export async function initializeAreaRemove() {
+  await loadSettings();
   changeTweetInputVisibility();
   changeSidebarVisibility();
   watchURLChange();

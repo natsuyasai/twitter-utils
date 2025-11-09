@@ -1,4 +1,5 @@
 import { getActiveTabName } from "../utlis/tabs";
+import { getSettings } from "../../shared/settings";
 
 export interface Position {
   x: number;
@@ -8,7 +9,14 @@ export interface Position {
 const STORAGE_KEY_POSITION = "auto-reload-position";
 const STORAGE_KEY_INTERVAL = "auto-reload-interval";
 const DEFAULT_POSITION: Position = { x: 0, y: 40 };
-const DEFAULT_INTERVAL_INDEX = 8; // 5分のインデックス
+
+let defaultIntervalIndex = 8; // 5分のインデックス (初期値)
+
+// 設定からデフォルトインターバルを読み込む
+export const loadDefaultInterval = async (): Promise<void> => {
+  const settings = await getSettings();
+  defaultIntervalIndex = settings.intervalTimer.defaultIntervalIndex;
+};
 
 // タブ名を含めたストレージキーを生成
 const getIntervalStorageKey = (): string => {
@@ -53,7 +61,7 @@ export const getStoredInterval = (maxIndex: number): number => {
   } catch (error) {
     console.error("Failed to load interval from localStorage:", error);
   }
-  return DEFAULT_INTERVAL_INDEX;
+  return defaultIntervalIndex;
 };
 
 // localStorageにインターバル設定を保存

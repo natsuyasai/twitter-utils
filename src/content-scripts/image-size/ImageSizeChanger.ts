@@ -1,4 +1,14 @@
-const IMAGE_WIDTH = "100px";
+import { getSettings } from "../../shared/settings";
+
+let imageWidth = "100px";
+
+/**
+ * 設定を読み込む
+ */
+async function loadSettings() {
+  const settings = await getSettings();
+  imageWidth = settings.imageSize.imageWidth;
+}
 
 /**
  * スタイル適用
@@ -6,7 +16,7 @@ const IMAGE_WIDTH = "100px";
 function addStyle() {
   const css = `
 div[data-testid="card.layoutLarge.media"]>a>div:has(img) {
-    width: ${IMAGE_WIDTH} !important;
+    width: ${imageWidth} !important;
 }
 [data-testid="card.layoutLarge.media"]>a {
     flex-direction: row !important;
@@ -26,7 +36,7 @@ function setSmallImage() {
     if (root === null) {
       return;
     }
-    root.style.width = IMAGE_WIDTH;
+    root.style.width = imageWidth;
   });
 }
 
@@ -59,7 +69,8 @@ function observeDOMChanges() {
   });
 }
 
-export function initializeImageSizeChanger() {
+export async function initializeImageSizeChanger() {
+  await loadSettings();
   addStyle();
   setSmallImage();
   observeDOMChanges();

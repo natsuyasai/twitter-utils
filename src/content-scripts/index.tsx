@@ -3,9 +3,15 @@ import { createRoot, type Root } from "react-dom/client";
 import App from "./App";
 import { initializeImageSizeChanger } from "./image-size/ImageSizeChanger";
 import { initializeAreaRemove } from "./area-remove/AreaRemove";
+import { loadDefaultInterval } from "./auto-reload/storage";
 
-initializeImageSizeChanger();
-initializeAreaRemove();
+const initialize = async () => {
+  await initializeAreaRemove();
+  await initializeImageSizeChanger();
+  await loadDefaultInterval();
+};
+
+initialize();
 
 const rootEl: HTMLElement = document.createElement("div");
 document.body.insertBefore(rootEl, document.body.firstElementChild);
