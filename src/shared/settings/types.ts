@@ -23,12 +23,19 @@ export interface ImageLinkSettings {
   openInIframe: boolean;
 }
 
+// タブスイッチャー設定
+export interface TabSwitcherSettings {
+  enabled: boolean;
+  swipeThreshold: number; // スワイプの最小移動距離（px）
+}
+
 // 全体の設定
 export interface AppSettings {
   areaRemove: AreaRemoveSettings;
   intervalTimer: IntervalTimerSettings;
   imageSize: ImageSizeSettings;
   imageLink: ImageLinkSettings;
+  tabSwitcher: TabSwitcherSettings;
 }
 
 // デフォルト設定
@@ -49,5 +56,9 @@ export const DEFAULT_SETTINGS: AppSettings = {
   },
   imageLink: {
     openInIframe: false,
+  },
+  tabSwitcher: {
+    enabled: true,
+    swipeThreshold: 100, // 100px
   },
 };

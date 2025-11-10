@@ -5,12 +5,14 @@ import { initializeImageSizeChanger } from "./image-size/ImageSizeChanger";
 import { initializeAreaRemove } from "./area-remove/AreaRemove";
 import { loadDefaultInterval } from "./auto-reload/storage";
 import { initializeImagePopup } from "./image-popup/ImagePopupManager";
+import { initializeTabSwitcher } from "./TabSwitcher/TabSwitcher";
 
 const initialize = async () => {
   await initializeAreaRemove();
   await initializeImageSizeChanger();
   await loadDefaultInterval();
   await initializeImagePopup();
+  await initializeTabSwitcher();
 };
 
 initialize();

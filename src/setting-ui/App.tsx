@@ -92,11 +92,28 @@ function App() {
     });
   };
 
-  const updateImageLink = (value: boolean) => {
+  const updateImageLink = (
+    field: keyof typeof settings.imageLink,
+    value: boolean
+  ) => {
     setSettings({
       ...settings,
       imageLink: {
-        openInIframe: value,
+        ...settings.imageLink,
+        [field]: value,
+      },
+    });
+  };
+
+  const updateTabSwitcher = (
+    field: keyof typeof settings.tabSwitcher,
+    value: boolean | number
+  ) => {
+    setSettings({
+      ...settings,
+      tabSwitcher: {
+        ...settings.tabSwitcher,
+        [field]: value,
       },
     });
   };
@@ -202,7 +219,7 @@ function App() {
       <div className={styles.section}>
         <h2>画像リンク設定</h2>
         <p className={styles.description}>
-          画像リンクをiframeで表示する機能を設定します
+          画像リンクをクリックしたときの動作を設定します
         </p>
 
         <div className={styles.formGroup}>
@@ -210,12 +227,55 @@ function App() {
             <input
               type="checkbox"
               checked={settings.imageLink.openInIframe}
-              onChange={(e) => updateImageLink(e.target.checked)}
+              onChange={(e) =>
+                updateImageLink("openInIframe", e.target.checked)
+              }
             />
-            <span>iframeで表示を有効にする</span>
+            <span>ポップアップ表示を行う</span>
           </label>
           <div className={styles.helpText}>
-            画像リンクをクリックしたときにiframeで内容を表示します
+            画像をクリックしたときにポップアップ上で表示します
+          </div>
+        </div>
+      </div>
+
+      <div className={styles.section}>
+        <h2>タブスイッチャー設定</h2>
+        <p className={styles.description}>
+          スワイプジェスチャーでタブを切り替える機能を設定します
+        </p>
+
+        <div className={styles.formGroup}>
+          <label className={styles.checkbox}>
+            <input
+              type="checkbox"
+              checked={settings.tabSwitcher.enabled}
+              onChange={(e) => updateTabSwitcher("enabled", e.target.checked)}
+            />
+            <span>スワイプでタブ切り替えを有効にする</span>
+          </label>
+          <div className={styles.helpText}>
+            左スワイプで次のタブ、右スワイプで前のタブに移動します
+          </div>
+        </div>
+
+        <div className={styles.formGroup}>
+          <label>スワイプ感度（最小移動距離）</label>
+          <input
+            type="number"
+            className={styles.input}
+            value={settings.tabSwitcher.swipeThreshold}
+            onChange={(e) =>
+              updateTabSwitcher("swipeThreshold", Number(e.target.value))
+            }
+            disabled={!settings.tabSwitcher.enabled}
+            min="50"
+            max="300"
+            step="10"
+          />
+          <div className={styles.helpText}>
+            スワイプと認識する最小移動距離をピクセル単位で設定します（推奨:
+            100px）
           </div>
         </div>
       </div>
