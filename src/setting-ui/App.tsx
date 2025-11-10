@@ -121,7 +121,7 @@ function App() {
         </p>
 
         <div className={styles.formGroup}>
-          <label>有効なURL</label>
+          <label>要素の削除判定を行うページ</label>
           <textarea
             className={styles.textarea}
             value={settings.areaRemove.enabledUrls.join("\n")}
@@ -137,7 +137,7 @@ function App() {
         </div>
 
         <div className={styles.formGroup}>
-          <label>有効なタブ名</label>
+          <label>要素の削除を行わないタブ名</label>
           <textarea
             className={styles.textarea}
             value={settings.areaRemove.enabledTabs.join("\n")}
