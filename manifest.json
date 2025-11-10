@@ -7,7 +7,7 @@
         "scripting"
     ],
     "host_permissions": [
-        "https://x.com/*"
+        "<all_urls>"
     ],
     "action": {},
     "options_page": "options.html",
