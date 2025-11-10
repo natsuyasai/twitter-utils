@@ -3,10 +3,11 @@
     "name": "twitter-utils",
     "version": "1.0.0",
     "permissions": [
-        "storage"
+        "storage",
+        "scripting"
     ],
     "host_permissions": [
-        "<all_urls>"
+        "https://x.com/*"
     ],
     "action": {},
     "options_page": "options.html",
@@ -17,11 +18,12 @@
             ],
             "js": [
                 "src/content-scripts/index.tsx"
-            ]
+            ],
+            "run_at": "document_end",
+            "all_frames": false
         }
     ],
     "background": {
-        "service_worker": "src/background/index.ts",
-        "persistent": false
+        "service_worker": "src/background/index.ts"
     }
 }
