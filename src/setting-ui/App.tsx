@@ -1,12 +1,19 @@
 import { useCallback, useEffect, useState } from "react";
 import type { AppSettings } from "../shared/settings";
-import { DEFAULT_SETTINGS, getSettings, saveSettings } from "../shared/settings";
+import {
+  DEFAULT_SETTINGS,
+  getSettings,
+  saveSettings,
+} from "../shared/settings";
 import { INTERVAL_OPTIONS } from "../content-scripts/auto-reload/constants";
 import styles from "./App.module.scss";
 
 function App() {
   const [settings, setSettings] = useState<AppSettings>(DEFAULT_SETTINGS);
-  const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
+  const [message, setMessage] = useState<{
+    type: "success" | "error";
+    text: string;
+  } | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   const showMessage = useCallback((type: "success" | "error", text: string) => {
@@ -54,7 +61,10 @@ function App() {
     }
   };
 
-  const updateAreaRemove = (field: keyof typeof settings.areaRemove, value: string | string[]) => {
+  const updateAreaRemove = (
+    field: keyof typeof settings.areaRemove,
+    value: string | string[]
+  ) => {
     setSettings({
       ...settings,
       areaRemove: {
@@ -104,14 +114,23 @@ function App() {
 
       <div className={styles.section}>
         <h2>エリア削除設定</h2>
-        <p className={styles.description}>特定のタブとURLでエリア削除機能を有効にします</p>
+        <p className={styles.description}>
+          特定のタブとURLでエリア削除機能を有効にします
+          <br />
+          指定したURLかつタブ名の場合は通常表示、それ以外ページでは左の領域とツイートメニューを非表示にします
+        </p>
 
         <div className={styles.formGroup}>
           <label>有効なURL</label>
           <textarea
             className={styles.textarea}
             value={settings.areaRemove.enabledUrls.join("\n")}
-            onChange={(e) => updateAreaRemove("enabledUrls", e.target.value.split("\n").filter((url) => url.trim()))}
+            onChange={(e) =>
+              updateAreaRemove(
+                "enabledUrls",
+                e.target.value.split("\n").filter((url) => url.trim())
+              )
+            }
             placeholder="https://x.com/home&#10;https://x.com/notifications"
           />
           <div className={styles.helpText}>1行に1つのURLを入力してください</div>
@@ -122,10 +141,17 @@ function App() {
           <textarea
             className={styles.textarea}
             value={settings.areaRemove.enabledTabs.join("\n")}
-            onChange={(e) => updateAreaRemove("enabledTabs", e.target.value.split("\n").filter((tab) => tab.trim()))}
+            onChange={(e) =>
+              updateAreaRemove(
+                "enabledTabs",
+                e.target.value.split("\n").filter((tab) => tab.trim())
+              )
+            }
             placeholder="フォロー中&#10;main"
           />
-          <div className={styles.helpText}>1行に1つのタブ名を入力してください</div>
+          <div className={styles.helpText}>
+            1行に1つのタブ名を入力してください
+          </div>
         </div>
       </div>
 
@@ -146,13 +172,17 @@ function App() {
               </option>
             ))}
           </select>
-          <div className={styles.helpText}>自動更新機能の初期表示時の間隔を設定します</div>
+          <div className={styles.helpText}>
+            自動更新機能の初期表示時の間隔を設定します
+          </div>
         </div>
       </div>
 
       <div className={styles.section}>
         <h2>画像サイズ設定</h2>
-        <p className={styles.description}>タイムラインに表示される画像のサイズを設定します</p>
+        <p className={styles.description}>
+          タイムラインに表示される画像のサイズを設定します
+        </p>
 
         <div className={styles.formGroup}>
           <label>画像の幅</label>
@@ -163,13 +193,17 @@ function App() {
             onChange={(e) => updateImageSize(e.target.value)}
             placeholder="100px"
           />
-          <div className={styles.helpText}>CSSの単位を含めて入力してください (例: 100px, 10rem)</div>
+          <div className={styles.helpText}>
+            CSSの単位を含めて入力してください (例: 100px, 10rem)
+          </div>
         </div>
       </div>
 
       <div className={styles.section}>
         <h2>画像リンク設定</h2>
-        <p className={styles.description}>画像リンクをiframeで表示する機能を設定します</p>
+        <p className={styles.description}>
+          画像リンクをiframeで表示する機能を設定します
+        </p>
 
         <div className={styles.formGroup}>
           <label className={styles.checkbox}>
@@ -180,20 +214,34 @@ function App() {
             />
             <span>iframeで表示を有効にする</span>
           </label>
-          <div className={styles.helpText}>画像リンクをクリックしたときにiframeで内容を表示します</div>
+          <div className={styles.helpText}>
+            画像リンクをクリックしたときにiframeで内容を表示します
+          </div>
         </div>
       </div>
 
       <div className={styles.buttonGroup}>
-        <button type="button" className={`${styles.button} ${styles.primary}`} onClick={handleSave}>
+        <button
+          type="button"
+          className={`${styles.button} ${styles.primary}`}
+          onClick={handleSave}
+        >
           設定を保存
         </button>
-        <button type="button" className={`${styles.button} ${styles.secondary}`} onClick={handleReset}>
+        <button
+          type="button"
+          className={`${styles.button} ${styles.secondary}`}
+          onClick={handleReset}
+        >
           初期値にリセット
         </button>
       </div>
 
-      {message && <div className={`${styles.message} ${styles[message.type]}`}>{message.text}</div>}
+      {message && (
+        <div className={`${styles.message} ${styles[message.type]}`}>
+          {message.text}
+        </div>
+      )}
     </div>
   );
 }
