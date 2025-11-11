@@ -68,6 +68,7 @@ function watchURLChange() {
 }
 
 const TWEET_INPUT_STYLE_ID = "twitter-utils-tweet-input-hide";
+const SIDEBAR_STYLE_ID = "twitter-utils-sidebar-hide";
 
 /**
  * 入力欄表示状態更新
@@ -99,23 +100,25 @@ function changeTweetInputVisibility() {
  * サイドバー表示状態更新
  */
 function changeSidebarVisibility() {
-  const header = document.getElementsByTagName("header");
-  let sidebarElement = null;
-  for (let index = 0; index < header.length; index++) {
-    const element = header[index];
-    if (element.role !== "banner") {
-      continue;
-    }
-    sidebarElement = element;
-    break;
-  }
-  if (sidebarElement === null) {
-    return;
-  }
+  const existingStyle = document.getElementById(SIDEBAR_STYLE_ID);
+
   if (isEnableTab()) {
-    sidebarElement.style.display = "initial";
+    // タブが有効な場合はスタイルを削除
+    if (existingStyle) {
+      existingStyle.remove();
+    }
   } else {
-    sidebarElement.style.display = "none";
+    // タブが無効な場合はスタイルを追加
+    if (!existingStyle) {
+      const style = document.createElement("style");
+      style.id = SIDEBAR_STYLE_ID;
+      style.textContent = `
+        header[role='banner'] {
+          display: none !important;
+        }
+      `;
+      document.head.appendChild(style);
+    }
   }
 }
 
