@@ -74,15 +74,23 @@ function changeTweetInputVisibility() {
   // プログレスバー指定の要素が入力部分しかないため、
   // プログレスバーを探して、その親の表示状態を切り替える
   const divs = document.getElementsByTagName("div");
-  let inputRootElement = null;
+  let progressbar = null;
   for (let index = 0; index < divs.length; index++) {
     const element = divs[index];
     if (element.role !== "progressbar") {
       continue;
     }
-    inputRootElement = element.parentElement;
+    progressbar = element;
     break;
   }
+  if (progressbar === null) {
+    return;
+  }
+  // プログレスバーの兄弟要素にツイート入力欄があるか確認
+  if (!isTweetArea(progressbar)) {
+    return;
+  }
+  const inputRootElement = progressbar.parentElement;
   if (inputRootElement === null) {
     return;
   }
@@ -93,12 +101,18 @@ function changeTweetInputVisibility() {
   }
 }
 
+function isTweetArea(element: HTMLElement) {
+  return (
+    element.nextElementSibling?.querySelector(
+      "div[data-testid*='tweetTextarea']"
+    ) !== null
+  );
+}
+
 /**
  * サイドバー表示状態更新
  */
 function changeSidebarVisibility() {
-  // プログレスバー指定の要素が入力部分しかないため、
-  // プログレスバーを探して、その親の表示状態を切り替える
   const header = document.getElementsByTagName("header");
   let sidebarElement = null;
   for (let index = 0; index < header.length; index++) {
