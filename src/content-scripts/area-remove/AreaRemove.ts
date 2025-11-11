@@ -53,6 +53,7 @@ function watchURLChange() {
   const debouncedUpdate = debounce(() => {
     changeTweetInputVisibility();
     changeSidebarVisibility();
+    removeHomeTitleElement();
   }, 500);
   const observer = new MutationObserver(debouncedUpdate);
   const mainElement = document.getElementsByTagName("main");
@@ -118,9 +119,39 @@ function changeSidebarVisibility() {
   }
 }
 
+function removeHomeTitleElement() {
+  const h2s = document.querySelectorAll("h2");
+  let homeTitleElement: HTMLElement | null = null;
+  for (const h2 of h2s) {
+    if (h2.innerHTML.indexOf("ホーム") < 0) {
+      continue;
+    }
+    homeTitleElement = h2;
+    break;
+  }
+  if (homeTitleElement === null) {
+    return;
+  }
+  const rootElement = getElementWithNavAsSibling(homeTitleElement);
+  if (rootElement === null) {
+    return;
+  }
+  rootElement.style.display = "none";
+}
+
+function getElementWithNavAsSibling(
+  element: HTMLElement | null
+): HTMLElement | null {
+  if (element?.nextElementSibling !== null) {
+    return element;
+  }
+  return getElementWithNavAsSibling(element.parentElement);
+}
+
 export async function initializeAreaRemove() {
   await loadSettings();
   changeTweetInputVisibility();
   changeSidebarVisibility();
+  removeHomeTitleElement();
   watchURLChange();
 }
