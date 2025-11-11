@@ -67,46 +67,32 @@ function watchURLChange() {
   }
 }
 
+const TWEET_INPUT_STYLE_ID = "twitter-utils-tweet-input-hide";
+
 /**
  * 入力欄表示状態更新
  */
 function changeTweetInputVisibility() {
-  // プログレスバー指定の要素が入力部分しかないため、
-  // プログレスバーを探して、その親の表示状態を切り替える
-  const divs = document.getElementsByTagName("div");
-  let progressbar = null;
-  for (let index = 0; index < divs.length; index++) {
-    const element = divs[index];
-    if (element.role !== "progressbar") {
-      continue;
-    }
-    progressbar = element;
-    break;
-  }
-  if (progressbar === null) {
-    return;
-  }
-  // プログレスバーの兄弟要素にツイート入力欄があるか確認
-  if (!isTweetArea(progressbar)) {
-    return;
-  }
-  const inputRootElement = progressbar.parentElement;
-  if (inputRootElement === null) {
-    return;
-  }
-  if (isEnableTab()) {
-    inputRootElement.style.display = "initial";
-  } else {
-    inputRootElement.style.display = "none";
-  }
-}
+  const existingStyle = document.getElementById(TWEET_INPUT_STYLE_ID);
 
-function isTweetArea(element: HTMLElement) {
-  return (
-    element.nextElementSibling?.querySelector(
-      "div[data-testid*='tweetTextarea']"
-    ) !== null
-  );
+  if (isEnableTab()) {
+    // タブが有効な場合はスタイルを削除
+    if (existingStyle) {
+      existingStyle.remove();
+    }
+  } else {
+    // タブが無効な場合はスタイルを追加
+    if (!existingStyle) {
+      const style = document.createElement("style");
+      style.id = TWEET_INPUT_STYLE_ID;
+      style.textContent = `
+        div:has(> [role="progressbar"] + * div[data-testid*="tweetTextarea"]) {
+          display: none !important;
+        }
+      `;
+      document.head.appendChild(style);
+    }
+  }
 }
 
 /**
