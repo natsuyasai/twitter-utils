@@ -1,10 +1,15 @@
 import { getSettings } from "../../shared/settings";
+import styles from "./TabSwitcher.module.scss";
 
 let isEnabled = false;
 let swipeThreshold = 100;
 let startX = 0;
 let startY = 0;
 let startTime = 0;
+let indicatorElement: HTMLElement | null = null;
+let progressBar: HTMLElement | null = null;
+let arrow: HTMLElement | null = null;
+let label: HTMLElement | null = null;
 
 /**
  * 設定を読み込む
@@ -24,6 +29,77 @@ function isEnableURL() {
     location.href.indexOf("https://x.com/home") >= 0 ||
     location.href.indexOf("https://x.com/notifications") >= 0
   );
+}
+
+/**
+ * スワイプインジケーターを作成
+ */
+function createIndicator() {
+  if (indicatorElement) return;
+
+  indicatorElement = document.createElement("div");
+  indicatorElement.className = styles.swipeIndicator;
+
+  arrow = document.createElement("div");
+  arrow.className = styles.arrow;
+  arrow.textContent = "→";
+
+  const progressContainer = document.createElement("div");
+  progressContainer.className = styles.progress;
+
+  progressBar = document.createElement("div");
+  progressBar.className = styles.progressBar;
+  progressBar.style.width = "0%";
+
+  progressContainer.appendChild(progressBar);
+
+  label = document.createElement("div");
+  label.className = styles.label;
+  label.textContent = "";
+
+  indicatorElement.appendChild(arrow);
+  indicatorElement.appendChild(progressContainer);
+  indicatorElement.appendChild(label);
+
+  document.body.appendChild(indicatorElement);
+}
+
+/**
+ * スワイプインジケーターを表示
+ */
+function showIndicator() {
+  if (!indicatorElement) return;
+  indicatorElement.classList.add(styles.active);
+}
+
+/**
+ * スワイプインジケーターを非表示
+ */
+function hideIndicator() {
+  if (!indicatorElement) return;
+  indicatorElement.classList.remove(styles.active);
+}
+
+/**
+ * スワイプの進行状況を更新
+ */
+function updateIndicator(diffX: number) {
+  if (!progressBar || !arrow || !label) return;
+
+  const absDistance = Math.abs(diffX);
+  const progress = Math.min((absDistance / swipeThreshold) * 100, 100);
+
+  progressBar.style.width = `${progress}%`;
+
+  if (diffX > 0) {
+    // 右スワイプ
+    arrow.textContent = "←";
+    label.textContent = "前のタブ";
+  } else {
+    // 左スワイプ
+    arrow.textContent = "→";
+    label.textContent = "次のタブ";
+  }
 }
 
 /**
@@ -131,10 +207,33 @@ function handleTouchStart(e: TouchEvent) {
 }
 
 /**
+ * タッチ移動イベント
+ */
+function handleTouchMove(e: TouchEvent) {
+  if (!isEnabled || !isEnableURL()) return;
+  if (startX === 0) return;
+
+  const currentX = e.touches[0].clientX;
+  const currentY = e.touches[0].clientY;
+  const diffX = currentX - startX;
+  const diffY = currentY - startY;
+
+  // 垂直方向の移動が大きい場合は無視
+  if (Math.abs(diffY) > Math.abs(diffX)) return;
+
+  // インジケーターを表示して更新
+  showIndicator();
+  updateIndicator(diffX);
+}
+
+/**
  * タッチ終了イベント
  */
 function handleTouchEnd(e: TouchEvent) {
   if (!isEnabled || !isEnableURL()) return;
+
+  // インジケーターを非表示
+  hideIndicator();
 
   const endX = e.changedTouches[0].clientX;
   const endY = e.changedTouches[0].clientY;
@@ -143,6 +242,10 @@ function handleTouchEnd(e: TouchEvent) {
   const diffX = endX - startX;
   const diffY = endY - startY;
   const diffTime = endTime - startTime;
+
+  // リセット
+  startX = 0;
+  startY = 0;
 
   // 垂直方向の移動が大きい場合はスワイプとみなさない
   if (Math.abs(diffY) > Math.abs(diffX)) return;
@@ -177,10 +280,33 @@ function handleMouseDown(e: MouseEvent) {
 }
 
 /**
+ * マウス移動イベント（デスクトップ用）
+ */
+function handleMouseMove(e: MouseEvent) {
+  if (!isEnabled || !isEnableURL()) return;
+  if (startX === 0) return;
+
+  const currentX = e.clientX;
+  const currentY = e.clientY;
+  const diffX = currentX - startX;
+  const diffY = currentY - startY;
+
+  // 垂直方向の移動が大きい場合は無視
+  if (Math.abs(diffY) > Math.abs(diffX)) return;
+
+  // インジケーターを表示して更新
+  showIndicator();
+  updateIndicator(diffX);
+}
+
+/**
  * マウス終了イベント（デスクトップ用）
  */
 function handleMouseUp(e: MouseEvent) {
   if (!isEnabled || !isEnableURL()) return;
+
+  // インジケーターを非表示
+  hideIndicator();
 
   const endX = e.clientX;
   const endY = e.clientY;
@@ -189,6 +315,10 @@ function handleMouseUp(e: MouseEvent) {
   const diffX = endX - startX;
   const diffY = endY - startY;
   const diffTime = endTime - startTime;
+
+  // リセット
+  startX = 0;
+  startY = 0;
 
   // 垂直方向の移動が大きい場合はスワイプとみなさない
   if (Math.abs(diffY) > Math.abs(diffX)) return;
@@ -221,11 +351,16 @@ export async function initializeTabSwitcher() {
     return;
   }
 
+  // インジケーターを作成
+  createIndicator();
+
   // タッチイベント（モバイル）
   document.addEventListener("touchstart", handleTouchStart, { passive: true });
+  document.addEventListener("touchmove", handleTouchMove, { passive: true });
   document.addEventListener("touchend", handleTouchEnd, { passive: true });
 
   // マウスイベント（デスクトップ）
   document.addEventListener("mousedown", handleMouseDown);
+  document.addEventListener("mousemove", handleMouseMove);
   document.addEventListener("mouseup", handleMouseUp);
 }
