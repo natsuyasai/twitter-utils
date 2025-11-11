@@ -13,7 +13,7 @@ export const useAutoReloadState = ({
 }: UseAutoReloadStateProps) => {
   const [isEnabled, setIsEnabled] = useState(true);
   const [isStopped, setIsStopped] = useState(false);
-  const [isVisible, setIsVisible] = useState(true);
+  const [isVisible, setIsVisible] = useState(false);
 
   // URLの状態更新
   const updateURLState = useCallback(() => {
