@@ -27,6 +27,14 @@ function isEnableURL() {
 }
 
 /**
+ * 要素が表示されているか判定
+ */
+function isElementVisible(element: HTMLElement): boolean {
+  const style = window.getComputedStyle(element);
+  return style.display !== "none" && style.visibility !== "hidden";
+}
+
+/**
  * すべてのタブ要素を取得
  */
 function getAllTabElements(): HTMLAnchorElement[] {
@@ -46,10 +54,18 @@ function getAllTabElements(): HTMLAnchorElement[] {
 }
 
 /**
- * アクティブなタブのインデックスを取得
+ * 表示されているタブ要素のみを取得
+ */
+function getVisibleTabElements(): HTMLAnchorElement[] {
+  const allTabs = getAllTabElements();
+  return allTabs.filter((tab) => isElementVisible(tab));
+}
+
+/**
+ * アクティブなタブのインデックスを取得（表示されているタブの中で）
  */
 function getActiveTabIndex(): number {
-  const tabs = getAllTabElements();
+  const tabs = getVisibleTabElements();
 
   for (let i = 0; i < tabs.length; i++) {
     const elem = tabs[i];
@@ -65,10 +81,10 @@ function getActiveTabIndex(): number {
 }
 
 /**
- * 指定したインデックスのタブに切り替え
+ * 指定したインデックスのタブに切り替え（表示されているタブの中で）
  */
 function switchToTab(index: number) {
-  const tabs = getAllTabElements();
+  const tabs = getVisibleTabElements();
   if (index >= 0 && index < tabs.length) {
     tabs[index].click();
   }
@@ -81,8 +97,11 @@ function switchToNextTab() {
   const currentIndex = getActiveTabIndex();
   if (currentIndex === -1) return;
 
-  const tabs = getAllTabElements();
-  const nextIndex = (currentIndex + 1) % tabs.length;
+  const tabs = getVisibleTabElements();
+  // 一番右のタブの場合は移動しない
+  if (currentIndex >= tabs.length - 1) return;
+
+  const nextIndex = currentIndex + 1;
   switchToTab(nextIndex);
 }
 
@@ -93,8 +112,10 @@ function switchToPreviousTab() {
   const currentIndex = getActiveTabIndex();
   if (currentIndex === -1) return;
 
-  const tabs = getAllTabElements();
-  const prevIndex = currentIndex === 0 ? tabs.length - 1 : currentIndex - 1;
+  // 一番左のタブの場合は移動しない
+  if (currentIndex <= 0) return;
+
+  const prevIndex = currentIndex - 1;
   switchToTab(prevIndex);
 }
 
