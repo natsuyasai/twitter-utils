@@ -7,7 +7,6 @@ import { loadDefaultInterval } from "./auto-reload/storage";
 import { initializeImagePopup } from "./image-popup/ImagePopupManager";
 import { initializeTabSwitcher } from "./tab-switcher/TabSwitcher";
 import { initializeTabs } from "./utlis/tabs";
-import { initializeHeaderCustomizer } from "./header-customizer/HeaderCustomizer";
 
 const initialize = async () => {
   await initializeTabs();
@@ -16,7 +15,6 @@ const initialize = async () => {
   await loadDefaultInterval();
   await initializeImagePopup();
   await initializeTabSwitcher();
-  await initializeHeaderCustomizer();
 };
 
 initialize();
