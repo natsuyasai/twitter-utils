@@ -1,4 +1,5 @@
 import { getSettings } from "../../shared/settings";
+import { isEnableURL } from "../utlis/tabs";
 import styles from "./TabSwitcher.module.scss";
 
 let isEnabled = false;
@@ -18,17 +19,6 @@ async function loadSettings() {
   const settings = await getSettings();
   isEnabled = settings.tabSwitcher.enabled;
   swipeThreshold = settings.tabSwitcher.swipeThreshold;
-}
-
-/**
- * 有効なURLか
- */
-function isEnableURL() {
-  return (
-    location.href === "https://x.com/" ||
-    location.href.indexOf("https://x.com/home") >= 0 ||
-    location.href.indexOf("https://x.com/notifications") >= 0
-  );
 }
 
 /**

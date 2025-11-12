@@ -1,7 +1,6 @@
-import { getActiveTabName } from "../utlis/tabs";
+import { getActiveTabName, isEnableURL } from "../utlis/tabs";
 import { getSettings } from "../../shared/settings";
 
-let enabledUrls: string[] = [];
 let enabledTabs: string[] = [];
 
 /**
@@ -9,15 +8,7 @@ let enabledTabs: string[] = [];
  */
 async function loadSettings() {
   const settings = await getSettings();
-  enabledUrls = settings.areaRemove.enabledUrls;
   enabledTabs = settings.areaRemove.enabledTabs;
-}
-
-/**
- * 有効なURLか
- */
-function isEnableURL() {
-  return enabledUrls.some((url) => location.href.indexOf(url) >= 0);
 }
 
 /**

@@ -6,8 +6,10 @@ import { initializeAreaRemove } from "./area-remove/AreaRemove";
 import { loadDefaultInterval } from "./auto-reload/storage";
 import { initializeImagePopup } from "./image-popup/ImagePopupManager";
 import { initializeTabSwitcher } from "./TabSwitcher/TabSwitcher";
+import { initializeTabs } from "./utlis/tabs";
 
 const initialize = async () => {
+  await initializeTabs();
   await initializeAreaRemove();
   await initializeImageSizeChanger();
   await loadDefaultInterval();

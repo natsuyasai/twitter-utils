@@ -1,3 +1,22 @@
+import { getSettings } from "../../shared/settings";
+
+let enabledUrls: string[] = [];
+
+/**
+ * 設定を読み込む
+ */
+async function loadSettings() {
+  const settings = await getSettings();
+  enabledUrls = settings.areaRemove.enabledUrls;
+}
+
+/**
+ * 有効なURLか
+ */
+export function isEnableURL() {
+  return enabledUrls.some((url) => location.href.indexOf(url) >= 0);
+}
+
 /**
  * アクティブなタブ名を取得
  * @returns
@@ -45,16 +64,8 @@ function getTabName(children: HTMLCollection): string | null {
 }
 
 /**
- * 有効なURLか
+ * tabs.tsの初期化
  */
-function isEnableURL() {
-  if (
-    location.href === "https://x.com/" ||
-    location.href.indexOf("https://x.com/home") >= 0 ||
-    location.href.indexOf("https://x.com/notifications") >= 0
-  ) {
-    return true;
-  } else {
-    return false;
-  }
+export async function initializeTabs() {
+  await loadSettings();
 }

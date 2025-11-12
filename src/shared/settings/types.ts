@@ -45,6 +45,7 @@ export const DEFAULT_SETTINGS: AppSettings = {
       "https://x.com/",
       "https://x.com/home",
       "https://x.com/notifications",
+      "/photo/",
     ],
     enabledTabs: ["フォロー中", "main"],
   },
