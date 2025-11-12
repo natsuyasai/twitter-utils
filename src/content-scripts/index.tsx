@@ -5,7 +5,7 @@ import { initializeImageSizeChanger } from "./image-size/ImageSizeChanger";
 import { initializeAreaRemove } from "./area-remove/AreaRemove";
 import { loadDefaultInterval } from "./auto-reload/storage";
 import { initializeImagePopup } from "./image-popup/ImagePopupManager";
-import { initializeTabSwitcher } from "./TabSwitcher/TabSwitcher";
+import { initializeTabSwitcher } from "./tab-switcher/TabSwitcher";
 import { initializeTabs } from "./utlis/tabs";
 import { initializeHeaderCustomizer } from "./header-customizer/HeaderCustomizer";
 
