@@ -29,6 +29,11 @@ export interface TabSwitcherSettings {
   swipeThreshold: number; // スワイプの最小移動距離（px）
 }
 
+// ヘッダーカスタマイザー設定
+export interface HeaderCustomizerSettings {
+  visibleLinks: string[]; // 表示するリンクのラベル
+}
+
 // 全体の設定
 export interface AppSettings {
   areaRemove: AreaRemoveSettings;
@@ -36,6 +41,7 @@ export interface AppSettings {
   imageSize: ImageSizeSettings;
   imageLink: ImageLinkSettings;
   tabSwitcher: TabSwitcherSettings;
+  headerCustomizer: HeaderCustomizerSettings;
 }
 
 // デフォルト設定
@@ -61,5 +67,18 @@ export const DEFAULT_SETTINGS: AppSettings = {
   tabSwitcher: {
     enabled: true,
     swipeThreshold: 100, // 100px
+  },
+  headerCustomizer: {
+    visibleLinks: [
+      "ホーム",
+      "調べたいものを検索",
+      "通知",
+      "ダイレクトメッセージ",
+      "リスト",
+      "ブックマーク",
+      "コミュニティ",
+      "プロフィール",
+      "ポストする",
+    ],
   },
 };

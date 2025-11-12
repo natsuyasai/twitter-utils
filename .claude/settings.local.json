@@ -3,7 +3,10 @@
     "allow": [
       "Bash(npm run check-types:*)",
       "Bash(npx tsc --noEmit)",
-      "Bash(npm run lint)"
+      "Bash(npm run lint)",
+      "Bash(claude mcp add:*)",
+      "Bash(claude mcp:*)",
+      "Bash(start chrome \"https://x.com/home\")"
     ],
     "deny": [],
     "ask": []

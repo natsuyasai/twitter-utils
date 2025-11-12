@@ -118,6 +118,33 @@ function App() {
     });
   };
 
+  const updateHeaderCustomizer = (label: string, checked: boolean) => {
+    const newVisibleLinks = checked
+      ? [...settings.headerCustomizer.visibleLinks, label]
+      : settings.headerCustomizer.visibleLinks.filter((l) => l !== label);
+
+    setSettings({
+      ...settings,
+      headerCustomizer: {
+        visibleLinks: newVisibleLinks,
+      },
+    });
+  };
+
+  const availableLinks = [
+    "ホーム",
+    "調べたいものを検索",
+    "通知",
+    "ダイレクトメッセージ",
+    "Grok",
+    "リスト",
+    "ブックマーク",
+    "コミュニティ",
+    "プレミアム",
+    "プロフィール",
+    "ポストする",
+  ];
+
   if (isLoading) {
     return <div className={styles.container}>読み込み中...</div>;
   }
@@ -276,6 +303,36 @@ function App() {
           <div className={styles.helpText}>
             スワイプと認識する最小移動距離をピクセル単位で設定します（推奨:
             100px）
+          </div>
+        </div>
+      </div>
+
+      <div className={styles.section}>
+        <h2>ヘッダーカスタマイズ設定</h2>
+        <p className={styles.description}>
+          画面下部に表示するナビゲーションリンクを選択します
+        </p>
+
+        <div className={styles.formGroup}>
+          <label>表示するリンク</label>
+          <div className={styles.checkboxGroup}>
+            {availableLinks.map((link) => (
+              <label key={link} className={styles.checkbox}>
+                <input
+                  type="checkbox"
+                  checked={settings.headerCustomizer.visibleLinks.includes(
+                    link
+                  )}
+                  onChange={(e) =>
+                    updateHeaderCustomizer(link, e.target.checked)
+                  }
+                />
+                <span>{link}</span>
+              </label>
+            ))}
+          </div>
+          <div className={styles.helpText}>
+            チェックしたリンクが画面下部のナビゲーションバーに表示されます
           </div>
         </div>
       </div>
