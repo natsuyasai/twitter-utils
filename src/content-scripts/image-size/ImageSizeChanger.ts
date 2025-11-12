@@ -47,6 +47,13 @@ function getImageRoot(element: Element) {
   if (element.parentElement === null) {
     return null;
   }
+  // 引用RTの場合はリンク要素がaタグではなくdivになっている
+  if (
+    element.parentElement.getAttribute("role") === "link" &&
+    element.parentElement.tagName.toLocaleLowerCase() === "div"
+  ) {
+    return null;
+  }
   const ariaLabelledby = element.parentElement.getAttribute("aria-labelledby");
   if (ariaLabelledby) {
     return element.parentElement;
