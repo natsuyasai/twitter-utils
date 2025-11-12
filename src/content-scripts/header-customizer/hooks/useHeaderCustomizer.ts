@@ -5,6 +5,7 @@ import type { NavLink } from "../types";
 import {
   NAV_VISIBLE_KEY,
   TWEET_INPUT_HIDE_STYLE_ID,
+  HEADER_HIDE_STYLE_ID,
   CLOSE_ICON_PATH,
   COMPOSE_ICON_PATH,
   DEFAULT_NAV_LINKS,
@@ -16,7 +17,7 @@ export function useHeaderCustomizer() {
   const [navLinks, setNavLinks] = useState<NavLink[]>([]);
   const [isNavVisible, setIsNavVisible] = useState<boolean>(() => {
     const stored = localStorage.getItem(NAV_VISIBLE_KEY);
-    return stored === null ? true : stored === "true";
+    return stored === null ? false : stored === "true";
   });
   const [isTweetInputVisible, setIsTweetInputVisible] =
     useState<boolean>(false);
@@ -39,6 +40,32 @@ export function useHeaderCustomizer() {
       setVisibleLinks(settings.headerCustomizer.visibleLinks);
     };
     loadSettings();
+  }, [isEnabled]);
+
+  // ヘッダーを非表示にする
+  useEffect(() => {
+    if (!isEnabled) {
+      return;
+    }
+
+    const existingStyle = document.getElementById(HEADER_HIDE_STYLE_ID);
+    if (!existingStyle) {
+      const style = document.createElement("style");
+      style.id = HEADER_HIDE_STYLE_ID;
+      style.textContent = `
+        header[role="banner"] {
+          display: none !important;
+        }
+      `;
+      document.head.appendChild(style);
+    }
+
+    return () => {
+      const styleToRemove = document.getElementById(HEADER_HIDE_STYLE_ID);
+      if (styleToRemove) {
+        styleToRemove.remove();
+      }
+    };
   }, [isEnabled]);
 
   // 元のヘッダーを非表示にしてリンクを抽出する
@@ -86,8 +113,6 @@ export function useHeaderCustomizer() {
 
       if (links.length > 0) {
         setNavLinks(links);
-        // ヘッダーを非表示
-        header.style.display = "none";
         return true;
       }
 
@@ -106,13 +131,6 @@ export function useHeaderCustomizer() {
 
       if (links.length > 0) {
         setNavLinks(links);
-        // ヘッダーを非表示
-        const header = document.querySelector<HTMLElement>(
-          "header[role='banner']"
-        );
-        if (header) {
-          header.style.display = "none";
-        }
       }
     };
 
