@@ -1,29 +1,29 @@
-import { getActiveTabName, isEnableURL } from "../utlis/tabs";
-import { getSettings } from "../../shared/settings";
+// import { getActiveTabName, isEnableURL } from "../utlis/tabs";
+// import { getSettings } from "../../shared/settings";
 
-let enabledTabs: string[] = [];
+// let enabledTabs: string[] = [];
 
 /**
  * 設定を読み込む
  */
-async function loadSettings() {
-  const settings = await getSettings();
-  enabledTabs = settings.areaRemove.enabledTabs;
-}
+// async function loadSettings() {
+//   const settings = await getSettings();
+//   enabledTabs = settings.areaRemove.enabledTabs;
+// }
 
 /**
  * 有効なタブか
  */
-function isEnableTab() {
-  if (!isEnableURL()) {
-    return true;
-  }
-  const tabName = getActiveTabName();
-  if (tabName === null) {
-    return false;
-  }
-  return enabledTabs.some((name) => name === tabName);
-}
+// function isEnableTab() {
+//   if (!isEnableURL()) {
+//     return true;
+//   }
+//   const tabName = getActiveTabName();
+//   if (tabName === null) {
+//     return false;
+//   }
+//   return enabledTabs.some((name) => name === tabName);
+// }
 
 /**
  * URL変更検知
@@ -58,59 +58,57 @@ function watchURLChange() {
   }
 }
 
-const TWEET_INPUT_STYLE_ID = "twitter-utils-tweet-input-hide";
-const SIDEBAR_STYLE_ID = "twitter-utils-sidebar-hide";
+// const TWEET_INPUT_STYLE_ID = "twitter-utils-tweet-input-hide";
+// const SIDEBAR_STYLE_ID = "twitter-utils-sidebar-hide";
 
 /**
  * 入力欄表示状態更新
  */
 function changeTweetInputVisibility() {
-  const existingStyle = document.getElementById(TWEET_INPUT_STYLE_ID);
-
-  if (isEnableTab()) {
-    // タブが有効な場合はスタイルを削除
-    if (existingStyle) {
-      existingStyle.remove();
-    }
-  } else {
-    // タブが無効な場合はスタイルを追加
-    if (!existingStyle) {
-      const style = document.createElement("style");
-      style.id = TWEET_INPUT_STYLE_ID;
-      style.textContent = `
-        div:has(> [role="progressbar"] + * div[data-testid*="tweetTextarea"]) {
-          display: none !important;
-        }
-      `;
-      document.head.appendChild(style);
-    }
-  }
+  // const existingStyle = document.getElementById(TWEET_INPUT_STYLE_ID);
+  // if (isEnableTab()) {
+  //   // タブが有効な場合はスタイルを削除
+  //   if (existingStyle) {
+  //     existingStyle.remove();
+  //   }
+  // } else {
+  //   // タブが無効な場合はスタイルを追加
+  //   if (!existingStyle) {
+  //     const style = document.createElement("style");
+  //     style.id = TWEET_INPUT_STYLE_ID;
+  //     style.textContent = `
+  //       div:has(> [role="progressbar"] + * div[data-testid*="tweetTextarea"]) {
+  //         display: none !important;
+  //       }
+  //     `;
+  //     document.head.appendChild(style);
+  //   }
+  // }
 }
 
 /**
  * サイドバー表示状態更新
  */
 function changeSidebarVisibility() {
-  const existingStyle = document.getElementById(SIDEBAR_STYLE_ID);
-
-  if (isEnableTab()) {
-    // タブが有効な場合はスタイルを削除
-    if (existingStyle) {
-      existingStyle.remove();
-    }
-  } else {
-    // タブが無効な場合はスタイルを追加
-    if (!existingStyle) {
-      const style = document.createElement("style");
-      style.id = SIDEBAR_STYLE_ID;
-      style.textContent = `
-        header[role='banner'] {
-          display: none !important;
-        }
-      `;
-      document.head.appendChild(style);
-    }
-  }
+  // const existingStyle = document.getElementById(SIDEBAR_STYLE_ID);
+  // if (isEnableTab()) {
+  //   // タブが有効な場合はスタイルを削除
+  //   if (existingStyle) {
+  //     existingStyle.remove();
+  //   }
+  // } else {
+  //   // タブが無効な場合はスタイルを追加
+  //   if (!existingStyle) {
+  //     const style = document.createElement("style");
+  //     style.id = SIDEBAR_STYLE_ID;
+  //     style.textContent = `
+  //       header[role='banner'] {
+  //         display: none !important;
+  //       }
+  //     `;
+  //     document.head.appendChild(style);
+  //   }
+  // }
 }
 
 function removeHomeTitleElement() {
@@ -143,7 +141,7 @@ function getElementWithNavAsSibling(
 }
 
 export async function initializeAreaRemove() {
-  await loadSettings();
+  // await loadSettings();
   changeTweetInputVisibility();
   changeSidebarVisibility();
   removeHomeTitleElement();
