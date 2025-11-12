@@ -7,6 +7,7 @@ import {
   TWEET_INPUT_HIDE_STYLE_ID,
   CLOSE_ICON_PATH,
   COMPOSE_ICON_PATH,
+  DEFAULT_NAV_LINKS,
 } from "../types";
 
 export function useHeaderCustomizer() {
@@ -93,6 +94,28 @@ export function useHeaderCustomizer() {
       return false;
     };
 
+    // フォールバック: デフォルトのナビゲーションリンクを使用
+    const applyFallbackLinks = () => {
+      const links: NavLink[] = [];
+      visibleLinks.forEach((label) => {
+        const defaultLink = DEFAULT_NAV_LINKS[label];
+        if (defaultLink) {
+          links.push(defaultLink);
+        }
+      });
+
+      if (links.length > 0) {
+        setNavLinks(links);
+        // ヘッダーを非表示
+        const header = document.querySelector<HTMLElement>(
+          "header[role='banner']"
+        );
+        if (header) {
+          header.style.display = "none";
+        }
+      }
+    };
+
     // 即座に実行
     if (extractLinks()) {
       return;
@@ -110,16 +133,20 @@ export function useHeaderCustomizer() {
       subtree: true,
     });
 
-    // 最大10秒後にタイムアウト
+    // 最大3秒後にタイムアウトしてフォールバックを使用
     const timeout = setTimeout(() => {
       observer.disconnect();
-    }, 10000);
+      // まだリンクが抽出できていない場合はフォールバックを使用
+      if (navLinks.length === 0) {
+        applyFallbackLinks();
+      }
+    }, 3000);
 
     return () => {
       observer.disconnect();
       clearTimeout(timeout);
     };
-  }, [visibleLinks]);
+  }, [visibleLinks, navLinks.length]);
 
   // ツイート入力エリアを非表示にする
   useEffect(() => {
