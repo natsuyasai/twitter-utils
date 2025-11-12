@@ -4,12 +4,17 @@ import styles from "./HeaderCustomizer.module.scss";
 
 const TOGGLE_BUTTON_ID = "twitter-utils-header-toggle";
 const NAV_BAR_ID = "twitter-utils-custom-nav-bar";
+const NAV_CONTAINER_ID = "twitter-utils-nav-container";
 const NAV_VISIBLE_KEY = "twitter-utils-nav-visible";
+const TWEET_INPUT_HIDE_STYLE_ID = "twitter-utils-tweet-input-hide-style";
 
+let navContainer: HTMLElement | null = null;
 let customNavBar: HTMLElement | null = null;
 let toggleButton: HTMLElement | null = null;
 let originalHeader: HTMLElement | null = null;
 let visibleLinks: string[] = [];
+let composeButton: HTMLAnchorElement | null = null;
+let isTweetInputVisible = false;
 
 interface NavLink {
   href: string;
@@ -24,6 +29,78 @@ interface NavLink {
 async function loadSettings() {
   const settings = await getSettings();
   visibleLinks = settings.headerCustomizer.visibleLinks;
+}
+
+/**
+ * ツイート入力エリアを非表示にするスタイルを追加
+ */
+function hideTweetInputArea() {
+  const existingStyle = document.getElementById(TWEET_INPUT_HIDE_STYLE_ID);
+  if (existingStyle) {
+    return;
+  }
+
+  const style = document.createElement("style");
+  style.id = TWEET_INPUT_HIDE_STYLE_ID;
+  style.textContent = `
+    div:has(> [role="progressbar"] + * div[data-testid*="tweetTextarea"]) {
+      display: none !important;
+    }
+  `;
+  document.head.appendChild(style);
+  isTweetInputVisible = false;
+}
+
+/**
+ * ツイート入力エリアを表示する
+ */
+function showTweetInputArea() {
+  const existingStyle = document.getElementById(TWEET_INPUT_HIDE_STYLE_ID);
+  if (existingStyle) {
+    existingStyle.remove();
+  }
+  isTweetInputVisible = true;
+}
+
+/**
+ * ツイート入力エリアの表示状態を切り替え
+ */
+function toggleTweetInputArea() {
+  if (isTweetInputVisible) {
+    hideTweetInputArea();
+    updateComposeButton(false);
+  } else {
+    showTweetInputArea();
+    updateComposeButton(true);
+  }
+}
+
+/**
+ * ポストボタンの表示を更新
+ */
+function updateComposeButton(isOpen: boolean) {
+  if (!composeButton) {
+    return;
+  }
+
+  const svg = composeButton.querySelector("svg");
+  if (!svg) {
+    return;
+  }
+
+  if (isOpen) {
+    // 閉じるボタンのアイコンに変更（×マーク）
+    svg.innerHTML = `
+      <path d="M10.59 12L4.54 5.96l1.42-1.42L12 10.59l6.04-6.05 1.42 1.42L13.41 12l6.05 6.04-1.42 1.42L12 13.41l-6.04 6.05-1.42-1.42L10.59 12z"></path>
+    `;
+    composeButton.setAttribute("aria-label", "閉じる");
+  } else {
+    // 元のポストアイコンに戻す（ペンマーク）
+    svg.innerHTML = `
+      <path d="M23 3c-6.62-.1-10.38 2.421-13.05 6.03C7.29 12.61 6 17.331 6 22h2c0-1.007.07-2.012.19-3H12c4.1 0 7.48-3.082 7.94-7.054C22.79 10.147 23.17 6.359 23 3zm-7 8h-1.5v2H16c.63-.016 1.2-.08 1.72-.188C16.95 15.24 14.68 17 12 17H8.55c.57-2.512 1.57-4.851 3-6.78 2.16-2.912 5.29-4.911 9.45-5.187C20.95 8.079 19.9 11 16 11zM4 9V6H1V4h3V1h2v3h3v2H6v3H4z"></path>
+    `;
+    composeButton.setAttribute("aria-label", "ポストする");
+  }
 }
 
 /**
@@ -83,12 +160,6 @@ function extractNavLinks(): NavLink[] {
  * カスタムナビゲーションバーを作成
  */
 function createCustomNavBar() {
-  // 既存のナビゲーションバーがあれば削除
-  const existing = document.getElementById(NAV_BAR_ID);
-  if (existing) {
-    existing.remove();
-  }
-
   // 新しいナビゲーションバーを作成
   customNavBar = document.createElement("div");
   customNavBar.id = NAV_BAR_ID;
@@ -112,6 +183,15 @@ function createCustomNavBar() {
       svg.setAttribute("height", "24");
     }
 
+    // /compose/post のリンクの場合は特別な処理
+    if (linkData.href === "/compose/post") {
+      composeButton = linkElement;
+      linkElement.addEventListener("click", (e) => {
+        e.preventDefault();
+        toggleTweetInputArea();
+      });
+    }
+
     if (customNavBar) {
       customNavBar.appendChild(linkElement);
     }
@@ -122,8 +202,6 @@ function createCustomNavBar() {
   if (!isVisible) {
     customNavBar.classList.add(styles.hidden);
   }
-
-  document.body.appendChild(customNavBar);
 }
 
 /**
@@ -143,10 +221,6 @@ function hideOriginalHeader() {
  * トグルボタンを作成
  */
 function createToggleButton() {
-  if (document.getElementById(TOGGLE_BUTTON_ID)) {
-    return;
-  }
-
   toggleButton = document.createElement("button");
   toggleButton.id = TOGGLE_BUTTON_ID;
   toggleButton.className = styles.toggleButton;
@@ -156,8 +230,6 @@ function createToggleButton() {
     : "ナビゲーションを表示";
 
   toggleButton.addEventListener("click", toggleNavVisibility);
-
-  document.body.appendChild(toggleButton);
 }
 
 /**
@@ -185,6 +257,39 @@ function toggleNavVisibility() {
 }
 
 /**
+ * ナビゲーションコンテナを作成
+ */
+function createNavContainer() {
+  // 既存のコンテナがあれば削除
+  const existing = document.getElementById(NAV_CONTAINER_ID);
+  if (existing) {
+    existing.remove();
+  }
+
+  // コンテナを作成
+  navContainer = document.createElement("div");
+  navContainer.id = NAV_CONTAINER_ID;
+  navContainer.className = styles.navContainer;
+
+  // トグルボタンを作成
+  createToggleButton();
+
+  // カスタムナビゲーションバーを作成
+  createCustomNavBar();
+
+  // コンテナに追加
+  if (toggleButton) {
+    navContainer.appendChild(toggleButton);
+  }
+  if (customNavBar) {
+    navContainer.appendChild(customNavBar);
+  }
+
+  // bodyに追加
+  document.body.appendChild(navContainer);
+}
+
+/**
  * ヘッダーをカスタマイズ
  */
 function customizeHeader() {
@@ -195,13 +300,13 @@ function customizeHeader() {
   // 元のヘッダーを非表示
   hideOriginalHeader();
 
-  // カスタムナビゲーションバーを作成
-  if (originalHeader) {
-    createCustomNavBar();
-  }
+  // ツイート入力エリアを非表示にする
+  hideTweetInputArea();
 
-  // トグルボタンを作成
-  createToggleButton();
+  // ナビゲーションコンテナを作成
+  if (originalHeader) {
+    createNavContainer();
+  }
 }
 
 /**
