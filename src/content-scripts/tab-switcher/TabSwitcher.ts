@@ -1,5 +1,4 @@
 import { getSettings } from "../../shared/settings";
-import { isEnableURL } from "../utlis/tabs";
 import styles from "./TabSwitcher.module.scss";
 
 let isEnabled = false;
@@ -12,6 +11,11 @@ let progressBar: HTMLElement | null = null;
 let arrow: HTMLElement | null = null;
 let label: HTMLElement | null = null;
 
+function isEnableURL() {
+  return ["https://x.com/home", "https://x.com/notifications"].some(
+    (url) => location.href.indexOf(url) >= 0
+  );
+}
 /**
  * 設定を読み込む
  */
