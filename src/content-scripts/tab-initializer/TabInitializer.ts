@@ -3,6 +3,8 @@
  * When opened with URL like "https://x.com/home?TabName", selects that tab
  */
 
+import { getSettings } from "../../shared/settings";
+
 /**
  * Check if URL is valid
  */
@@ -56,7 +58,13 @@ function selectTab(tabName: string): boolean {
 /**
  * Tab initialization process
  */
-function initializeTab(): void {
+async function initializeTab(): Promise<void> {
+  // Check if extension is enabled
+  const settings = await getSettings();
+  if (!settings.enabled) {
+    return;
+  }
+
   if (!isEnableURL()) {
     return;
   }

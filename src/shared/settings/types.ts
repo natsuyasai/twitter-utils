@@ -36,6 +36,7 @@ export interface HeaderCustomizerSettings {
 
 // 全体の設定
 export interface AppSettings {
+  enabled: boolean; // 全機能の有効/無効
   areaRemove: AreaRemoveSettings;
   intervalTimer: IntervalTimerSettings;
   imageSize: ImageSizeSettings;
@@ -46,6 +47,7 @@ export interface AppSettings {
 
 // デフォルト設定
 export const DEFAULT_SETTINGS: AppSettings = {
+  enabled: true, // デフォルトは全機能有効
   areaRemove: {
     enabledUrls: [
       "https://x.com/",

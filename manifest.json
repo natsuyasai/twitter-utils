@@ -9,7 +9,10 @@
     "host_permissions": [
         "<all_urls>"
     ],
-    "action": {},
+    "action": {
+        "default_popup": "popup.html",
+        "default_title": "Twitter Utils"
+    },
     "options_page": "options.html",
     "content_scripts": [
         {

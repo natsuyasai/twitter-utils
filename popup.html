@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Twitter Utils</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="popup-container">
+    <div class="header">
+      <h1>Twitter Utils</h1>
+    </div>
+
+    <div class="content">
+      <div class="toggle-section">
+        <div class="toggle-label">
+          <span class="label-text">全機能を有効化</span>
+          <span class="label-description">すべてのコンテンツスクリプト機能の有効/無効を切り替えます</span>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" id="enableToggle">
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="actions">
+        <button id="settingsButton" class="button secondary">詳細設定</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="src/popup/popup.ts" type="module"></script>
+</body>
+</html>

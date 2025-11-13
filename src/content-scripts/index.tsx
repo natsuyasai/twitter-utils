@@ -8,8 +8,17 @@ import { initializeImagePopup } from "./image-popup/ImagePopupManager";
 import { initializeTabSwitcher } from "./tab-switcher/TabSwitcher";
 import { initializeTabs } from "./utlis/tabs";
 import "./tab-initializer/TabInitializer";
+import { getSettings } from "../shared/settings";
 
 const initialize = async () => {
+  // 設定を読み込んで、全機能が有効かチェック
+  const settings = await getSettings();
+
+  if (!settings.enabled) {
+    console.log("[Twitter Utils] Extension is disabled");
+    return;
+  }
+
   await initializeTabs();
   await initializeAreaRemove();
   await initializeImageSizeChanger();
