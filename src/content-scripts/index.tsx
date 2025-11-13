@@ -7,6 +7,7 @@ import { loadDefaultInterval } from "./auto-reload/storage";
 import { initializeImagePopup } from "./image-popup/ImagePopupManager";
 import { initializeTabSwitcher } from "./tab-switcher/TabSwitcher";
 import { initializeTabs } from "./utlis/tabs";
+import "./tab-initializer/TabInitializer";
 
 const initialize = async () => {
   await initializeTabs();
