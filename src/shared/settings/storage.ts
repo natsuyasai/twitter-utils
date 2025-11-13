@@ -4,15 +4,29 @@ import { DEFAULT_SETTINGS } from "./types";
 const SETTINGS_KEY = "twitter-utils-settings";
 
 /**
+ * 使用するストレージを取得（sync優先、利用不可ならlocal）
+ */
+const getStorage = () => {
+  if (chrome?.storage?.sync) {
+    return chrome.storage.sync;
+  }
+  if (chrome?.storage?.local) {
+    return chrome.storage.local;
+  }
+  return null;
+};
+
+/**
  * Chrome Storage APIから設定を取得
  */
 export const getSettings = async (): Promise<AppSettings> => {
-  if (!chrome?.storage?.sync) {
-    console.warn("chrome.storage.sync is not available");
+  const storage = getStorage();
+  if (!storage) {
+    console.warn("chrome.storage is not available");
     return DEFAULT_SETTINGS;
   }
   try {
-    const result = await chrome.storage.sync.get(SETTINGS_KEY);
+    const result = await storage.get(SETTINGS_KEY);
     if (result[SETTINGS_KEY]) {
       // 保存された設定とデフォルト設定をマージ（新しい設定項目に対応）
       return {
@@ -30,13 +44,14 @@ export const getSettings = async (): Promise<AppSettings> => {
  * Chrome Storage APIに設定を保存
  */
 export const saveSettings = async (settings: AppSettings): Promise<void> => {
-  if (!chrome?.storage?.sync) {
-    const error = new Error("chrome.storage.sync is not available");
+  const storage = getStorage();
+  if (!storage) {
+    const error = new Error("chrome.storage is not available");
     console.error("Failed to save settings:", error);
     throw error;
   }
   try {
-    await chrome.storage.sync.set({ [SETTINGS_KEY]: settings });
+    await storage.set({ [SETTINGS_KEY]: settings });
   } catch (error) {
     console.error("Failed to save settings to chrome.storage:", error);
     throw error;
@@ -69,7 +84,8 @@ export const onSettingsChange = (
     changes: { [key: string]: chrome.storage.StorageChange },
     areaName: string
   ) => {
-    if (areaName === "sync" && changes[SETTINGS_KEY]) {
+    // sync または local のいずれかで変更があった場合
+    if ((areaName === "sync" || areaName === "local") && changes[SETTINGS_KEY]) {
       callback(changes[SETTINGS_KEY].newValue);
     }
   };
