@@ -4,7 +4,9 @@ interface UseTabSwitchDetectionProps {
   onTabSwitch: () => void;
 }
 
-export const useTabSwitchDetection = ({ onTabSwitch }: UseTabSwitchDetectionProps) => {
+export const useTabSwitchDetection = ({
+  onTabSwitch,
+}: UseTabSwitchDetectionProps) => {
   useEffect(() => {
     const tabElements = document.body.querySelectorAll("a[role='tab']");
 
@@ -12,7 +14,7 @@ export const useTabSwitchDetection = ({ onTabSwitch }: UseTabSwitchDetectionProp
       // タブクリック後、少し遅延させて設定を復元（タブ切り替え完了を待つ）
       setTimeout(() => {
         onTabSwitch();
-      }, 300);
+      }, 2000);
     };
 
     // すべてのタブ要素にクリックイベントリスナーを追加

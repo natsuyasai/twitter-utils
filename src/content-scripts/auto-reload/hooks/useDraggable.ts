@@ -55,9 +55,16 @@ export const useDraggable = () => {
     }
   }, [isDragging, handleMouseMove, handleMouseUp]);
 
+  // 位置を復元する関数
+  const restorePosition = useCallback(() => {
+    const storedPosition = getStoredPosition();
+    setPosition(storedPosition);
+  }, []);
+
   return {
     position,
     isDragging,
     handleMouseDown,
+    restorePosition,
   };
 };

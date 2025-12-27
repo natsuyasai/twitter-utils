@@ -11,7 +11,7 @@ const AutoReload: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
 
   // ドラッグ&ドロップ機能
-  const { position, isDragging, handleMouseDown } = useDraggable();
+  const { position, isDragging, handleMouseDown, restorePosition } = useDraggable();
 
   // インターバル管理（先に定義してrestoreIntervalSettingを取得）
   const autoReloadIntervalResult = useAutoReloadInterval({
@@ -34,7 +34,10 @@ const AutoReload: React.FC = () => {
 
   // タブ切り替え検知
   useTabSwitchDetection({
-    onTabSwitch: autoReloadIntervalResult.restoreIntervalSetting,
+    onTabSwitch: () => {
+      autoReloadIntervalResult.restoreIntervalSetting();
+      restorePosition();
+    },
   });
 
   // インターバル管理のフック結果を展開
