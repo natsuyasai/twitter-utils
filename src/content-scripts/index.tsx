@@ -9,6 +9,7 @@ import { initializeTabSwitcher } from "./tab-switcher/TabSwitcher";
 import { initializeTabs } from "./utlis/tabs";
 import "./tab-initializer/TabInitializer";
 import { getSettings } from "../shared/settings";
+import { initializeScrollPositionRestore } from "./scroll-potision-restore/scrollPositionRestore";
 
 const initialize = async () => {
   // 設定を読み込んで、全機能が有効かチェック
@@ -25,6 +26,7 @@ const initialize = async () => {
   await loadDefaultInterval();
   await initializeImagePopup();
   await initializeTabSwitcher();
+  initializeScrollPositionRestore();
 };
 
 initialize();
