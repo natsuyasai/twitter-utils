@@ -26,7 +26,7 @@ function getTabNameFromURL(): string | null {
 
   if (firstKey && !params.get(firstKey)) {
     // If value is empty, the key itself is the tab name
-    return firstKey;
+    return decodeURI(firstKey);
   }
 
   return null;
@@ -38,7 +38,7 @@ function getTabNameFromURL(): string | null {
 function selectTab(tabName: string): boolean {
   // Find tabs on home screen
   const tabs = document.querySelectorAll<HTMLElement>(
-    'div[role="tablist"] a[role="tab"]'
+    'div[role="tablist"] div[role="tab"]'
   );
 
   for (const tab of tabs) {
