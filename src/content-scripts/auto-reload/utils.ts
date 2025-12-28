@@ -2,7 +2,9 @@
  * スクロール状態をチェック
  */
 export const isScrolling = (): boolean => {
-  return document.scrollingElement ? document.scrollingElement.scrollTop > 0 : false;
+  return document.scrollingElement
+    ? document.scrollingElement.scrollTop > 0
+    : false;
 };
 
 /**
@@ -22,16 +24,14 @@ export const isExecutableURL = (): boolean => {
  * タブの再選択（メイン処理）
  */
 export const reselectTab = (): void => {
-  const tabs = document.getElementsByTagName("a");
+  const tabs = document.querySelectorAll("div[role='tab']");
   for (let i = 0; i < tabs.length; i++) {
     const elem = tabs[i];
-    const isTab = elem.hasAttribute("role") && elem.getAttribute("role") === "tab";
-    if (!isTab) continue;
-
     const isSelectedTab =
-      elem.hasAttribute("aria-selected") && elem.getAttribute("aria-selected") === "true";
+      elem.hasAttribute("aria-selected") &&
+      elem.getAttribute("aria-selected") === "true";
     if (isSelectedTab) {
-      elem.click();
+      (elem as HTMLElement).click();
       break;
     }
   }
