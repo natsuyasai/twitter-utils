@@ -85,8 +85,11 @@ export const onSettingsChange = (
     areaName: string
   ) => {
     // sync または local のいずれかで変更があった場合
-    if ((areaName === "sync" || areaName === "local") && changes[SETTINGS_KEY]) {
-      callback(changes[SETTINGS_KEY].newValue);
+    if (
+      (areaName === "sync" || areaName === "local") &&
+      changes[SETTINGS_KEY]
+    ) {
+      callback(changes[SETTINGS_KEY].newValue as AppSettings);
     }
   };
 
