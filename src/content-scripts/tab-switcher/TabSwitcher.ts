@@ -107,26 +107,15 @@ function isElementVisible(element: HTMLElement): boolean {
 /**
  * すべてのタブ要素を取得
  */
-function getAllTabElements(): HTMLAnchorElement[] {
-  const tabs: HTMLAnchorElement[] = [];
-  const allLinks = document.getElementsByTagName("a");
-
-  for (let i = 0; i < allLinks.length; i++) {
-    const elem = allLinks[i];
-    const isTab =
-      elem.hasAttribute("role") && elem.getAttribute("role") === "tab";
-    if (isTab) {
-      tabs.push(elem);
-    }
-  }
-
-  return tabs;
+function getAllTabElements(): HTMLElement[] {
+  const tabs = document.querySelectorAll("div[role='tab']");
+  return Array.from(tabs).map((tab) => tab as HTMLElement);
 }
 
 /**
  * 表示されているタブ要素のみを取得
  */
-function getVisibleTabElements(): HTMLAnchorElement[] {
+function getVisibleTabElements(): HTMLElement[] {
   const allTabs = getAllTabElements();
   return allTabs.filter((tab) => isElementVisible(tab));
 }
