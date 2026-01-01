@@ -134,35 +134,74 @@ export function useHeaderCustomizer() {
       }
     };
 
-    // 即座に実行
-    if (extractLinks()) {
-      return;
-    }
+    let retryCount = 0;
+    const maxRetries = 10; // 最大10回リトライ
+    const retryInterval = 200; // 200msごとにリトライ
+    let retryTimer: NodeJS.Timeout | null = null;
+    let timeoutTimer: NodeJS.Timeout | null = null;
+    let observer: MutationObserver | null = null;
 
-    // ヘッダーが見つからない場合は監視
-    const observer = new MutationObserver(() => {
+    const tryExtractLinks = () => {
       if (extractLinks()) {
-        observer.disconnect();
+        // 成功したらすべてのタイマーとオブザーバーをクリア
+        if (retryTimer) clearInterval(retryTimer);
+        if (timeoutTimer) clearTimeout(timeoutTimer);
+        if (observer) observer.disconnect();
+        return true;
       }
-    });
+      return false;
+    };
 
-    observer.observe(document.body, {
-      childList: true,
-      subtree: true,
-    });
-
-    // 最大3秒後にタイムアウトしてフォールバックを使用
-    const timeout = setTimeout(() => {
-      observer.disconnect();
-      // まだリンクが抽出できていない場合はフォールバックを使用
-      if (navLinks.length === 0) {
-        applyFallbackLinks();
+    // ページ読み込み直後のための遅延実行とリトライ処理
+    const startInitialDelay = setTimeout(() => {
+      // 初回実行
+      if (tryExtractLinks()) {
+        return;
       }
-    }, 3000);
+
+      // 見つからなかった場合、一定間隔でリトライ
+      retryTimer = setInterval(() => {
+        retryCount++;
+
+        if (tryExtractLinks()) {
+          return;
+        }
+
+        // 最大リトライ回数に達したらインターバルを停止してMutationObserverに切り替え
+        if (retryCount >= maxRetries) {
+          if (retryTimer) clearInterval(retryTimer);
+
+          // MutationObserverで監視
+          observer = new MutationObserver(() => {
+            if (extractLinks()) {
+              if (observer) observer.disconnect();
+              if (timeoutTimer) clearTimeout(timeoutTimer);
+            }
+          });
+
+          observer.observe(document.body, {
+            childList: true,
+            subtree: true,
+          });
+        }
+      }, retryInterval);
+
+      // 最大5秒後にタイムアウトしてフォールバックを使用
+      timeoutTimer = setTimeout(() => {
+        if (retryTimer) clearInterval(retryTimer);
+        if (observer) observer.disconnect();
+        // まだリンクが抽出できていない場合はフォールバックを使用
+        if (navLinks.length === 0) {
+          applyFallbackLinks();
+        }
+      }, 5000);
+    }, 100); // 初回実行を100ms遅延
 
     return () => {
-      observer.disconnect();
-      clearTimeout(timeout);
+      clearTimeout(startInitialDelay);
+      if (retryTimer) clearInterval(retryTimer);
+      if (timeoutTimer) clearTimeout(timeoutTimer);
+      if (observer) observer.disconnect();
     };
   }, [visibleLinks, navLinks.length]);
 
