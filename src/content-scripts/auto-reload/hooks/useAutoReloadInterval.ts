@@ -24,10 +24,14 @@ export const useAutoReloadInterval = ({
   isEnabled,
   isScrolling,
 }: UseAutoReloadIntervalProps) => {
-  const [currentInterval, setCurrentInterval] = useState(defaultInterval);
   const [selectedIntervalIndex, setSelectedIntervalIndex] = useState(() =>
     getStoredInterval(intervalOptions.length)
   );
+  const [currentInterval, setCurrentInterval] = useState(() => {
+    const storedIndex = getStoredInterval(intervalOptions.length);
+    const option = intervalOptions.find((opt) => opt.value === storedIndex);
+    return option ? option.seconds : defaultInterval;
+  });
   const timerIdRef = useRef<number>(-1);
 
   // インターバル設定を復元する関数
@@ -69,11 +73,6 @@ export const useAutoReloadInterval = ({
     },
     [intervalOptions]
   );
-
-  // 初回マウント時にインターバルを復元
-  useEffect(() => {
-    restoreIntervalSetting();
-  }, [restoreIntervalSetting]);
 
   // インターバル処理の初期化と更新
   useEffect(() => {

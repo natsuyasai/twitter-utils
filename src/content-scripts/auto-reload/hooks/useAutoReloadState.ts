@@ -11,7 +11,12 @@ export const useAutoReloadState = ({
   isScrolling,
   onURLChange,
 }: UseAutoReloadStateProps) => {
-  const [isEnabled, setIsEnabled] = useState(true);
+  const [isEnabled, setIsEnabled] = useState(() => {
+    if (isExecutableURL()) {
+      return !isScrolling();
+    }
+    return false;
+  });
   const [isStopped, setIsStopped] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
 
@@ -77,11 +82,6 @@ export const useAutoReloadState = ({
       clearTimeout(timeoutId);
     };
   }, [updateURLState, onURLChange]);
-
-  // 初回URL状態チェック
-  useEffect(() => {
-    updateURLState();
-  }, [updateURLState]);
 
   // ON/OFFボタンハンドラ
   const handleToggle = useCallback(() => {
