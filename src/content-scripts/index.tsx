@@ -21,12 +21,31 @@ const initialize = async () => {
   }
 
   await initializeTabs();
-  await initializeAreaRemove();
-  await initializeImageSizeChanger();
-  await loadDefaultInterval();
-  await initializeImagePopup();
-  await initializeTabSwitcher();
-  initializeScrollPositionRestore();
+
+  // 個別機能の有効/無効に応じて初期化
+  if (settings.features.areaRemove) {
+    await initializeAreaRemove();
+  }
+
+  if (settings.features.imageSize) {
+    await initializeImageSizeChanger();
+  }
+
+  if (settings.features.autoReload) {
+    await loadDefaultInterval();
+  }
+
+  if (settings.features.imagePopup) {
+    await initializeImagePopup();
+  }
+
+  if (settings.features.tabSwitcher) {
+    await initializeTabSwitcher();
+  }
+
+  if (settings.features.scrollRestore) {
+    initializeScrollPositionRestore();
+  }
 };
 
 initialize();

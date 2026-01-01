@@ -34,9 +34,21 @@ export interface HeaderCustomizerSettings {
   visibleLinks: string[]; // 表示するリンクのラベル
 }
 
+// 個別機能の有効/無効設定
+export interface FeatureToggles {
+  autoReload: boolean; // 自動リロード
+  imageSize: boolean; // 画像サイズ変更
+  areaRemove: boolean; // エリア削除
+  imagePopup: boolean; // 画像ポップアップ
+  tabSwitcher: boolean; // タブスイッチャー
+  scrollRestore: boolean; // スクロール位置復元
+  headerCustomizer: boolean; // ヘッダーカスタマイザー
+}
+
 // 全体の設定
 export interface AppSettings {
   enabled: boolean; // 全機能の有効/無効
+  features: FeatureToggles; // 個別機能の有効/無効
   areaRemove: AreaRemoveSettings;
   intervalTimer: IntervalTimerSettings;
   imageSize: ImageSizeSettings;
@@ -48,6 +60,15 @@ export interface AppSettings {
 // デフォルト設定
 export const DEFAULT_SETTINGS: AppSettings = {
   enabled: true, // デフォルトは全機能有効
+  features: {
+    autoReload: true,
+    imageSize: true,
+    areaRemove: true,
+    imagePopup: true,
+    tabSwitcher: true,
+    scrollRestore: true,
+    headerCustomizer: true,
+  },
   areaRemove: {
     enabledUrls: [
       "https://x.com/",

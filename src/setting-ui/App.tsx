@@ -131,6 +131,19 @@ function App() {
     });
   };
 
+  const updateFeatureToggle = (
+    feature: keyof typeof settings.features,
+    value: boolean
+  ) => {
+    setSettings({
+      ...settings,
+      features: {
+        ...settings.features,
+        [feature]: value,
+      },
+    });
+  };
+
   const availableLinks = [
     "ホーム",
     "調べたいものを検索",
@@ -154,6 +167,97 @@ function App() {
       <div className={styles.header}>
         <h1>Twitter Utils 設定</h1>
         <p>拡張機能の動作をカスタマイズできます</p>
+      </div>
+
+      <div className={styles.section}>
+        <h2>個別機能の有効/無効</h2>
+        <p className={styles.description}>
+          各機能の有効/無効を個別に設定できます
+        </p>
+
+        <div className={styles.formGroup}>
+          <div className={styles.checkboxGroup}>
+            <label className={styles.checkbox}>
+              <input
+                type="checkbox"
+                checked={settings.features.autoReload}
+                onChange={(e) =>
+                  updateFeatureToggle("autoReload", e.target.checked)
+                }
+              />
+              <span>自動リロード</span>
+            </label>
+
+            <label className={styles.checkbox}>
+              <input
+                type="checkbox"
+                checked={settings.features.imageSize}
+                onChange={(e) =>
+                  updateFeatureToggle("imageSize", e.target.checked)
+                }
+              />
+              <span>画像サイズ変更</span>
+            </label>
+
+            <label className={styles.checkbox}>
+              <input
+                type="checkbox"
+                checked={settings.features.areaRemove}
+                onChange={(e) =>
+                  updateFeatureToggle("areaRemove", e.target.checked)
+                }
+              />
+              <span>エリア削除</span>
+            </label>
+
+            <label className={styles.checkbox}>
+              <input
+                type="checkbox"
+                checked={settings.features.imagePopup}
+                onChange={(e) =>
+                  updateFeatureToggle("imagePopup", e.target.checked)
+                }
+              />
+              <span>画像ポップアップ</span>
+            </label>
+
+            <label className={styles.checkbox}>
+              <input
+                type="checkbox"
+                checked={settings.features.tabSwitcher}
+                onChange={(e) =>
+                  updateFeatureToggle("tabSwitcher", e.target.checked)
+                }
+              />
+              <span>タブスイッチャー</span>
+            </label>
+
+            <label className={styles.checkbox}>
+              <input
+                type="checkbox"
+                checked={settings.features.scrollRestore}
+                onChange={(e) =>
+                  updateFeatureToggle("scrollRestore", e.target.checked)
+                }
+              />
+              <span>スクロール位置復元</span>
+            </label>
+
+            <label className={styles.checkbox}>
+              <input
+                type="checkbox"
+                checked={settings.features.headerCustomizer}
+                onChange={(e) =>
+                  updateFeatureToggle("headerCustomizer", e.target.checked)
+                }
+              />
+              <span>ヘッダーカスタマイズ</span>
+            </label>
+          </div>
+          <div className={styles.helpText}>
+            チェックを外した機能は無効になります
+          </div>
+        </div>
       </div>
 
       <div className={styles.section}>

@@ -6,7 +6,8 @@
       "Bash(npm run lint)",
       "Bash(claude mcp add:*)",
       "Bash(claude mcp:*)",
-      "Bash(start chrome \"https://x.com/home\")"
+      "Bash(start chrome \"https://x.com/home\")",
+      "Bash(npx tsc:*)"
     ],
     "deny": [],
     "ask": []

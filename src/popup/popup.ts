@@ -1,6 +1,20 @@
 import { getSettings, saveSettings } from "../shared/settings";
 
 /**
+ * タブをリロードする
+ */
+async function reloadActiveTab() {
+  const tabs = await chrome.tabs.query({
+    active: true,
+    currentWindow: true,
+  });
+
+  if (tabs[0]?.id) {
+    chrome.tabs.reload(tabs[0].id);
+  }
+}
+
+/**
  * ポップアップの初期化
  */
 async function initializePopup() {
@@ -20,7 +34,7 @@ async function initializePopup() {
   const settings = await getSettings();
   enableToggle.checked = settings.enabled;
 
-  // トグルスイッチの変更を監視
+  // 全機能トグルスイッチの変更を監視
   enableToggle.addEventListener("change", async () => {
     const newSettings = {
       ...settings,
@@ -32,15 +46,7 @@ async function initializePopup() {
       `[Popup] Extension ${enableToggle.checked ? "enabled" : "disabled"}`
     );
 
-    // タブをリロードして変更を反映
-    const tabs = await chrome.tabs.query({
-      active: true,
-      currentWindow: true,
-    });
-
-    if (tabs[0]?.id) {
-      chrome.tabs.reload(tabs[0].id);
-    }
+    await reloadActiveTab();
   });
 
   // 設定ボタンのクリックイベント
