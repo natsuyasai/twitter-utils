@@ -7,7 +7,13 @@
       "Bash(claude mcp add:*)",
       "Bash(claude mcp:*)",
       "Bash(start chrome \"https://x.com/home\")",
-      "Bash(npx tsc:*)"
+      "Bash(npx tsc:*)",
+      "Bash(npm install:*)",
+      "Bash(npm uninstall:*)",
+      "Bash(npx wxt --help:*)",
+      "Bash(npx wxt prepare)",
+      "Bash(npm run build:*)",
+      "Bash(ls:*)"
     ],
     "deny": [],
     "ask": []

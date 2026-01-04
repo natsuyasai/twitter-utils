@@ -10,7 +10,6 @@
     ],
     "module": "ESNext",
     "types": [
-      "vite/client",
       "chrome"
     ],
     "skipLibCheck": true,
@@ -30,6 +29,8 @@
     "noUncheckedSideEffectImports": true
   },
   "include": [
-    "src"
+    "src",
+    "entrypoints",
+    ".wxt"
   ]
 }

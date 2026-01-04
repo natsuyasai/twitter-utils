@@ -15,15 +15,17 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a Chrome extension for Twitter/X (x.com) that provides utility features like auto-reload, image size changing, and area removal. Built with React 19, TypeScript, Vite, and the @crxjs/vite-plugin for Chrome extension development.
+This is a Chrome extension for Twitter/X (x.com) that provides utility features like auto-reload, image size changing, and area removal. Built with React 19, TypeScript, and WXT (a next-generation web extension framework built on Vite).
 
 ## Commands
 
 ### Development
-- `npm run dev` - Start Vite dev server with hot reload
-- `npm run build` - Build the extension (TypeScript compilation + Vite build)
+
+- `npm run dev` - Start WXT dev server with hot reload
+- `npm run build` - Build the extension for production
+- `npm run check-types` - Run type checking
 - `npm run lint` - Run ESLint on the codebase
-- `npm run preview` - Preview the production build
+- `npm run preview` - Build for production
 
 ### Storybook
 - `npm run storybook` - Start Storybook dev server on port 6006
@@ -40,19 +42,22 @@ Test files should be named `*.test.ts`, `*.test.tsx`, `*.spec.ts`, or `*.spec.ts
 
 ### Extension Structure
 
-The extension uses manifest v3 and consists of:
-- **Content Script**: Injected into https://x.com/home (entry: `src/content-scripts/index.tsx`)
-- **Background Service Worker**: `src/background/index.ts`
-- **Settings UI**: `src/setting-ui/` (separate React app for extension settings)
+The extension uses manifest v3 and WXT's file-based entrypoints structure:
+
+- **Content Script**: `entrypoints/content.tsx` - Injected into <https://x.com/*>
+- **Background Service Worker**: `entrypoints/background.ts`
+- **Popup**: `entrypoints/popup/` - Extension popup UI
+- **Options Page**: `entrypoints/options/` - Extension settings page (uses React app from `src/setting-ui/`)
 
 ### Content Scripts Architecture
 
-Content scripts are organized by feature and initialized in `src/content-scripts/index.tsx`:
+Content scripts are organized by feature and initialized in `entrypoints/content.tsx`:
 
 1. **React-based components** are rendered into a div injected at the start of document.body
 2. **Vanilla JS utilities** are initialized directly (ImageSizeChanger, AreaRemove)
 
-Key content script features:
+Key content script features in `src/content-scripts/`:
+
 - `auto-reload/` - Auto-refresh Twitter tabs with customizable intervals
 - `image-size/` - Image size manipulation utilities
 - `area-remove/` - DOM element removal utilities
@@ -87,16 +92,22 @@ The auto-reload feature is refactored into a modular architecture:
 
 ### Build Configuration
 
-- **Vite config** (`vite.config.ts`):
-  - @crxjs/vite-plugin for Chrome extension bundling
+- **WXT config** (`wxt.config.ts`):
+  - File-based entrypoints in `entrypoints/` directory
+  - Auto-generated manifest.json from config and entrypoints
   - React plugin with babel-plugin-react-compiler for optimization
-  - Vitest with dual test projects (unit + storybook)
   - `define: { global: "window" }` for compatibility
+
+- **Vitest config** (`vitest.config.ts`):
+  - Separate config file for testing
+  - Dual test projects (unit + storybook)
+  - React plugin with babel-plugin-react-compiler
 
 - **TypeScript**:
   - Strict mode enabled
   - Separate configs for app and node environments
   - Type definitions from `@types/chrome` for extension APIs
+  - Auto-generated WXT types in `.wxt/` directory
 
 ### Storybook Integration
 
@@ -110,9 +121,10 @@ The auto-reload feature is refactored into a modular architecture:
 ### Content Script Development
 
 1. **Browser Environment**: Content scripts run in browser context - no need for `typeof window === 'undefined'` checks
-2. **localStorage Keys**: Use tab-specific keys when settings should differ per Twitter tab. Pattern: `${KEY}-${tabName}`
-3. **React Rendering**: Content script React components are rendered into a div injected at document.body start
-4. **Event Listeners**: Always clean up listeners in useEffect return functions
+2. **WXT Entrypoints**: Use `defineContentScript()` in content script files with matches and runAt configuration
+3. **localStorage Keys**: Use tab-specific keys when settings should differ per Twitter tab. Pattern: `${KEY}-${tabName}`
+4. **React Rendering**: Content script React components are rendered into a div injected at document.body start
+5. **Event Listeners**: Always clean up listeners in useEffect return functions
 
 ### Component Organization
 

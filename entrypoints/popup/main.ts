@@ -1,4 +1,4 @@
-import { getSettings, saveSettings } from "../shared/settings";
+import { getSettings, saveSettings } from "../../src/shared/settings";
 
 /**
  * タブをリロードする
