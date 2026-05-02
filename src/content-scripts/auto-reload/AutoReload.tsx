@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useCallback, useRef } from "react";
 import styles from "./AutoReload.module.scss";
 import { INTERVAL_OPTIONS, DEFAULT_INTERVAL } from "./constants";
 import { isScrolling, isExecutableURL, reselectTab } from "./utils";
@@ -24,24 +24,35 @@ const AutoReload: React.FC = () => {
     isScrolling,
   });
 
+  const {
+    selectedIntervalIndex,
+    disabledOptionValues,
+    handleIntervalChange,
+    restoreIntervalSetting,
+    updateIntervalSettingForTab,
+  } = autoReloadIntervalResult;
+
+  // URL変更時にインターバル設定の復元とフォロー中タブ状態の更新を行う
+  const handleURLChange = useCallback(() => {
+    restoreIntervalSetting();
+    updateIntervalSettingForTab();
+  }, [restoreIntervalSetting, updateIntervalSettingForTab]);
+
   // 自動リロード状態管理
   const { isEnabled, isStopped, isVisible, handleToggle, handleStatusClick } =
     useAutoReloadState({
       isExecutableURL,
       isScrolling,
-      onURLChange: autoReloadIntervalResult.restoreIntervalSetting,
+      onURLChange: handleURLChange,
     });
 
   // タブ切り替え検知
   useTabSwitchDetection({
     onTabSwitch: () => {
-      autoReloadIntervalResult.restoreIntervalSetting();
+      handleURLChange();
       restorePosition();
     },
   });
-
-  // インターバル管理のフック結果を展開
-  const { selectedIntervalIndex, handleIntervalChange } = autoReloadIntervalResult;
 
   return (
     <div
@@ -96,7 +107,11 @@ const AutoReload: React.FC = () => {
               value={selectedIntervalIndex}
             >
               {INTERVAL_OPTIONS.map((option) => (
-                <option key={option.value} value={option.value}>
+                <option
+                  key={option.value}
+                  value={option.value}
+                  disabled={disabledOptionValues.includes(option.value)}
+                >
                   {option.label}
                 </option>
               ))}

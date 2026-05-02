@@ -20,3 +20,8 @@ export const INTERVAL_OPTIONS: IntervalOption[] = [
 ];
 
 export const DEFAULT_INTERVAL = 300; // 5分
+
+// フォロー中タブの更新に必要な最小インターバル（秒）
+export const FOLLOWING_TAB_MIN_INTERVAL_SEC = 61;
+// 1分に相当するオプションの value（これ未満のオプションはフォロー中タブ選択中に無効化）
+export const FOLLOWING_TAB_MIN_OPTION_VALUE = 5;
